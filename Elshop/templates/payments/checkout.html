@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Checkout
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="tech-card">
+                <div class="card-header">
+                    <h2 class="card-title">Checkout</h2>
+                    <p class="card-subtitle">Dear {{ user.username }}, please confirm your order details</p>
+                </div>
+                <div class="card-body">
+                    <!-- Order Details -->
+                    <div class="order-summary mb-4">
+                        <h4 class="summary-title">Order Details</h4>
+                        <div class="summary-item">
+                            <span class="summary-label">Order ID:</span>
+                            <span class="summary-value">#{{ order.id }}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Total Amount:</span>
+                            <span class="summary-value">₹{{ order.total_amount }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Shipping Address -->
+                    <div class="address-section mb-4">
+                        <h4 class="section-subtitle">Shipping Address</h4>
+                        <div class="address-display">
+                            <span class="address-name">{{ order.address.full_name }}</span>
+                            <span class="address-text">{{ order.address.address_line1 }}, {{ order.address.city }}, {{ order.address.state }} - {{ order.address.pincode }}</span>
+                        </div>
+                        <a href="{% url 'select_address_for_order' order.id %}" class="btn btn-outline-primary w-100 mt-3">
+                            <i class="fas fa-edit me-2"></i>Change Address
+                        </a>
+                    </div>
+
+                    <!-- Payment Section -->
+                    <div class="payment-section">
+                        <h4 class="section-subtitle">Payment</h4>
+                        <form id="payment-form" method="post" action="{% url 'payment:payment_success' %}">
+                            {% csrf_token %}
+                            <script src="https://checkout.razorpay.com/v1/checkout.js"
+                                    data-key="{{ key_id }}"
+                                    data-amount="{{ razorpay_order.amount }}"
+                                    data-currency="{{ razorpay_order.currency }}"
+                                    data-order_id="{{ razorpay_order.id }}"
+                                    data-buttontext="Pay Now"
+                                    data-name="My Shopping Site"
+                                    data-description="Order Payment"
+                                    data-theme.color="#ff3d00">
+                            </script>
+                            <input type="hidden" name="razorpay_order_id" value="{{ razorpay_order.id }}">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                        </form>
+                    </div>
+
+                    <!-- Cancel Order Section -->
+                    <hr class="my-4">
+                    <form method="post" action="{% url 'cancel_order' order.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger w-100 mt-3">
+                            <i class="fas fa-times-circle me-2"></i>Cancel Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

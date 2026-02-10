@@ -1,0 +1,587 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}
+Order History
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Page Header -->
+    <div class="text-center mb-5">
+        <h1 class="gaming-title text-gradient-orange">Order History</h1>
+        <p class="text-secondary">Track and manage your gaming gear orders</p>
+    </div>
+    
+    {% if orders %}
+        {% for order in orders %}
+        <!-- Order Card -->
+        <div class="order-card mb-4">
+            <!-- Card Header -->
+            <div class="order-card-header">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="order-id-badge">
+                            <i class="bi bi-hash"></i>#{{ order.id }}
+                        </div>
+                        <span class="order-date">
+                            <i class="bi bi-calendar3"></i>{{ order.order_date|date:"d M Y, H:i" }}
+                        </span>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Status Badge -->
+                        <span class="status-badge status-{{ order.status|lower }}">
+                            {% if order.status == 'PENDING' %}
+                                <i class="bi bi-clock-history"></i>Pending Payment
+                            {% elif order.status == 'PAID' %}
+                                <i class="bi bi-check-circle"></i>Paid
+                            {% elif order.status == 'SHIPPED' %}
+                                <i class="bi bi-truck"></i>Shipped
+                            {% elif order.status == 'DELIVERED' %}
+                                <i class="bi bi-box-seam"></i>Delivered
+                            {% elif order.status == 'CANCELLED' %}
+                                <i class="bi bi-x-circle"></i>Cancelled
+                            {% else %}
+                                {{ order.status }}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card Body -->
+            <div class="order-card-body">
+                <!-- Order Summary -->
+                <div class="order-summary mb-4">
+                    <div class="summary-item">
+                        <span class="summary-label">Total Amount</span>
+                        <span class="summary-value price-highlight">₹{{ order.total_amount }}</span>
+                    </div>
+                </div>
+                
+                <!-- Ordered Items -->
+                <div class="ordered-items-section">
+                    <h5 class="section-title"><i class="bi bi-box-seam"></i>Ordered Items</h5>
+                    
+                    {% for item in order.order_details.all %}
+                    <div class="ordered-item">
+                        <div class="item-thumbnail">
+                            <img src="{{ item.order_item.thumbnail.url }}" alt="{{ item.order_item.name }}">
+                        </div>
+                        <div class="item-details">
+                            <a href="{% url 'product_details' item.order_item.id %}" class="item-name">
+                                {{ item.order_item.title }}
+                            </a>
+                            <div class="item-meta">
+                                <span class="item-qty">
+                                    <i class="bi bi-collection"></i>Qty: {{ item.quantity }}
+                                </span>
+                                <span class="item-price">
+                                    <i class="bi bi-currency-rupee"></i>{{ item.price|floatformat:2 }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="item-subtotal">
+                            <span class="subtotal-label">Subtotal</span>
+                            <span class="subtotal-value">₹{{ item.price|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                    {% if not forloop.last %}
+                    <div class="item-divider"></div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Card Footer -->
+            <div class="order-card-footer">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <!-- Status Timeline -->
+                    <div class="status-timeline">
+                        <div class="timeline-item {% if order.status == 'PENDING' %}active{% elif order.status != 'PENDING' %}completed{% endif %}">
+                            <div class="timeline-dot"></div>
+                            <span class="timeline-label">Order Placed</span>
+                        </div>
+                        <div class="timeline-line {% if order.status != 'PENDING' %}active{% endif %}"></div>
+                        <div class="timeline-item {% if order.status == 'PAID' or order.status == 'SHIPPED' or order.status == 'DELIVERED' %}active{% endif %} {% if order.status == 'PAID' or order.status == 'SHIPPED' or order.status == 'DELIVERED' %}completed{% endif %}">
+                            <div class="timeline-dot"></div>
+                            <span class="timeline-label">Payment</span>
+                        </div>
+                        <div class="timeline-line {% if order.status == 'SHIPPED' or order.status == 'DELIVERED' %}active{% endif %}"></div>
+                        <div class="timeline-item {% if order.status == 'SHIPPED' or order.status == 'DELIVERED' %}active{% endif %} {% if order.status == 'SHIPPED' or order.status == 'DELIVERED' %}completed{% endif %}">
+                            <div class="timeline-dot"></div>
+                            <span class="timeline-label">Shipped</span>
+                        </div>
+                        <div class="timeline-line {% if order.status == 'DELIVERED' %}active{% endif %}"></div>
+                        <div class="timeline-item {% if order.status == 'DELIVERED' %}active completed{% endif %}">
+                            <div class="timeline-dot"></div>
+                            <span class="timeline-label">Delivered</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="order-actions">
+                        {% if order.status == 'PENDING' %}
+                        <a href="{% url 'payment:create_razorpay_order' order.id %}" class="btn-gaming btn-gaming-primary">
+                            <i class="bi bi-credit-card"></i>Pay Now
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'order_detail' order.id %}" class="btn-gaming btn-gaming-secondary">
+                            <i class="bi bi-eye"></i>View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <!-- Shop More CTA -->
+        <div class="text-center mt-5">
+            <a href="{% url 'home_page' %}" class="btn-gaming btn-gaming-primary">
+                <i class="bi bi-shop"></i>Shop More
+            </a>
+        </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="bi bi-bag-x"></i>
+        </div>
+        <h2 class="empty-title">No Orders Yet</h2>
+        <p class="empty-text">You haven't placed any orders yet. Start shopping and gear up your setup!</p>
+        <a href="{% url 'homepage' %}" class="btn-gaming btn-gaming-primary">
+            <i class="bi bi-shop"></i>Start Shopping
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Custom CSS for Order History 2 -->
+<style>
+    /* Gaming Title */
+    .gaming-title {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .text-gradient-orange {
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Order Card Styles */
+    .order-card {
+        background: var(--bg-card);
+        border: 1px solid rgba(255, 61, 0, 0.2);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        transition: all var(--transition);
+    }
+    
+    .order-card:hover {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-card-hover);
+    }
+    
+    .order-card-header {
+        background: linear-gradient(135deg, rgba(255, 61, 0, 0.1) 0%, rgba(0, 229, 255, 0.05) 100%);
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 61, 0, 0.15);
+    }
+    
+    .order-id-badge {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        background: rgba(255, 61, 0, 0.15);
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius);
+        border: 1px solid rgba(255, 61, 0, 0.3);
+    }
+    
+    .order-date {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+    
+    .order-date i {
+        color: var(--secondary-color);
+        margin-right: 0.5rem;
+    }
+    
+    /* Status Badges */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .status-pending {
+        background: rgba(255, 234, 0, 0.15);
+        color: var(--accent-yellow);
+        border: 1px solid rgba(255, 234, 0, 0.3);
+    }
+    
+    .status-paid {
+        background: rgba(0, 230, 118, 0.15);
+        color: var(--accent-green);
+        border: 1px solid rgba(0, 230, 118, 0.3);
+    }
+    
+    .status-shipped {
+        background: rgba(0, 229, 255, 0.15);
+        color: var(--secondary-color);
+        border: 1px solid rgba(0, 229, 255, 0.3);
+    }
+    
+    .status-delivered {
+        background: rgba(124, 77, 255, 0.15);
+        color: var(--accent-purple);
+        border: 1px solid rgba(124, 77, 255, 0.3);
+    }
+    
+    .status-cancelled {
+        background: rgba(255, 64, 129, 0.15);
+        color: var(--accent-pink);
+        border: 1px solid rgba(255, 64, 129, 0.3);
+    }
+    
+    /* Order Card Body */
+    .order-card-body {
+        padding: 1.5rem;
+    }
+    
+    /* Order Summary */
+    .order-summary {
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .summary-item {
+        text-align: right;
+    }
+    
+    .summary-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-right: 1rem;
+    }
+    
+    .summary-value {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    .price-highlight {
+        color: var(--primary-color);
+    }
+    
+    /* Ordered Items Section */
+    .ordered-items-section {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: var(--radius);
+        padding: 1.25rem;
+        margin-top: 1rem;
+    }
+    
+    .section-title {
+        font-family: var(--font-gaming);
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .section-title i {
+        color: var(--secondary-color);
+    }
+    
+    .ordered-item {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        padding: 0.75rem 0;
+    }
+    
+    .item-thumbnail {
+        width: 80px;
+        height: 80px;
+        border-radius: var(--radius);
+        overflow: hidden;
+        flex-shrink: 0;
+        border: 1px solid rgba(255, 61, 0, 0.2);
+    }
+    
+    .item-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .item-details {
+        flex-grow: 1;
+    }
+    
+    .item-name {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 1rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    
+    .item-name:hover {
+        color: var(--primary-color);
+    }
+    
+    .item-meta {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+    
+    .item-meta i {
+        color: var(--secondary-color);
+        margin-right: 0.25rem;
+    }
+    
+    .item-subtotal {
+        text-align: right;
+        min-width: 100px;
+    }
+    
+    .subtotal-label {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-bottom: 0.25rem;
+    }
+    
+    .subtotal-value {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+    
+    .item-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Gaming Buttons */
+    .order-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-gaming {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        font-family: var(--font-gaming);
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: var(--radius);
+        border: none;
+        cursor: pointer;
+        transition: all var(--transition);
+    }
+    
+    .btn-gaming-primary {
+        background: var(--gradient-primary);
+        color: white;
+        box-shadow: var(--shadow-glow-orange);
+    }
+    
+    .btn-gaming-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 30px rgba(255, 61, 0, 0.6);
+        color: white;
+    }
+    
+    .btn-gaming-secondary {
+        background: transparent;
+        color: var(--text-primary);
+        border: 1px solid rgba(255, 61, 0, 0.5);
+    }
+    
+    .btn-gaming-secondary:hover {
+        background: rgba(255, 61, 0, 0.1);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        box-shadow: var(--shadow-glow-orange);
+    }
+    
+    /* Status Timeline */
+    .order-card-footer {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 1rem 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .status-timeline {
+        display: flex;
+        align-items: center;
+    }
+    
+    .timeline-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
+    }
+    
+    .timeline-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--bg-dark-secondary);
+        border: 2px solid var(--text-muted);
+        transition: all var(--transition);
+    }
+    
+    .timeline-item.active .timeline-dot {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 10px rgba(255, 61, 0, 0.5);
+    }
+    
+    .timeline-item.completed .timeline-dot {
+        background: var(--accent-green);
+        border-color: var(--accent-green);
+        box-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
+    }
+    
+    .timeline-label {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+    
+    .timeline-item.active .timeline-label,
+    .timeline-item.completed .timeline-label {
+        color: var(--text-primary);
+    }
+    
+    .timeline-line {
+        width: 30px;
+        height: 2px;
+        background: var(--bg-dark-secondary);
+        margin: 0 0.25rem;
+        margin-bottom: 1.25rem;
+        transition: all var(--transition);
+    }
+    
+    .timeline-line.active {
+        background: linear-gradient(90deg, var(--accent-green), var(--primary-color));
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(255, 61, 0, 0.15);
+    }
+    
+    .empty-icon {
+        font-size: 5rem;
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+        opacity: 0.5;
+    }
+    
+    .empty-title {
+        font-family: var(--font-display);
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.75rem;
+    }
+    
+    .empty-text {
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .gaming-title {
+            font-size: 1.75rem;
+        }
+        
+        .order-card-header {
+            flex-direction: column;
+            align-items: flex-start !important;
+        }
+        
+        .order-card-footer .d-flex {
+            flex-direction: column;
+            align-items: flex-start !important;
+        }
+        
+        .status-timeline {
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            width: 100%;
+        }
+        
+        .order-actions {
+            width: 100%;
+        }
+        
+        .btn-gaming {
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .ordered-item {
+            flex-wrap: wrap;
+        }
+        
+        .item-thumbnail {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .item-subtotal {
+            width: 100%;
+            text-align: left;
+            margin-top: 0.5rem;
+            padding-left: 76px;
+        }
+    }
+</style>
+{% endblock %}
+

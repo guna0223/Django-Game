@@ -1,0 +1,76 @@
+<div class="cart-item card shadow-sm" data-product-id="{{ item.product.id }}">
+
+    <div class="row g-0 align-items-center">
+
+        <!-- Image -->
+        <div class="col-md-3 text-center cart-thumb">
+            <img src="{{ item.product.thumbnail.url }}" class="img-fluid rounded">
+        </div>
+
+        <!-- Details -->
+        <div class="col-md-6">
+            <div class="card-body">
+
+                <h5 class="cart-product-title">
+                    <a href="{% url 'product_details' item.product.pk %}" class="no-decoration">
+                        {{ item.product.title }}
+                    </a>
+                </h5>
+
+                <p class="cart-product-desc">
+                    {{ item.product.desc|truncatewords:15 }}
+                </p>
+
+                <p class="cart-price">
+
+                    <!-- Original Price -->
+                    <span class="text-muted text-decoration-line-through">
+                        ₹{{ item.product.price }}
+                    </span>
+
+                    <!-- Discount Percentage -->
+                    {% if item.product.discount %}
+                    <span class="text-success fw-semibold ms-2">
+                        {{ item.product.discount }}% OFF
+                    </span>
+                    {% endif %}
+
+                    <br>
+
+                    <!-- Offer Price -->
+                    <span class="fw-bold text-dark">
+                        ₹{{ item.product.offer_price|floatformat:2 }}
+                    </span>
+
+                </p>
+
+
+                <div class="cart-controls">
+
+                    <!-- MINUS -->
+                    <button class="btn btn-outline-secondary btn-sm qty-minus">-</button>
+
+                    <!-- QTY -->
+                    <span class="cart-qty qty">{{ item.quantity }}</span>
+
+                    <!-- PLUS -->
+                    <button class="btn btn-outline-secondary btn-sm qty-plus">+</button>
+
+                    <!-- REMOVE -->
+                    <button class="btn btn-danger btn-sm ms-3 remove-item">
+                        Remove
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Subtotal -->
+        <div class="col-md-3 text-end cart-subtotal subtotal">
+            ₹{{ item.subtotal|floatformat:2 }}
+        </div>
+
+    </div>
+
+</div>

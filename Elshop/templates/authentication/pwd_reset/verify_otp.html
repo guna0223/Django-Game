@@ -1,0 +1,37 @@
+{% extends "base/base.html" %}
+{% block title %}
+Verify OTP
+{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="tech-card">
+                <div class="card-header">
+                    <h2 class="card-title">Verify OTP</h2>
+                    <p class="card-subtitle">Enter the OTP sent to your email</p>
+                </div>
+                <div class="card-body">
+                    {% if error %}
+                    <div class="alert alert-danger mb-4">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+                    <form method="post" class="tech-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="otp" class="form-label">OTP</label>
+                            <input type="text" name="otp" id="otp" class="form-control" placeholder="Enter OTP" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-check-circle me-2"></i>Verify OTP
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

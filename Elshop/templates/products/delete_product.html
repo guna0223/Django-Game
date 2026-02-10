@@ -1,0 +1,67 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Delete Product
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="tech-card">
+                <div class="card-header">
+                    <h2 class="card-title text-danger">Confirm Deletion</h2>
+                    <p class="card-subtitle">This action cannot be undone</p>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-start g-4">
+                        <!-- Product Thumbnail -->
+                        <div class="col-md-4">
+                            <img src="{{ product.thumbnail.url }}"
+                                 class="img-fluid delete-product-thumbnail"
+                                 alt="{{ product.title }}"
+                                 style="border-radius: var(--radius);">
+                        </div>
+
+                        <!-- Product Details -->
+                        <div class="col-md-8">
+                            <h5 class="fw-bold text-primary">{{ product.title }}</h5>
+                            <p class="text-muted mb-2">{{ product.desc }}</p>
+                            <p class="fw-semibold">Price: ₹ {{ product.price }}</p>
+                            <p class="text-danger small mt-3">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                This action cannot be undone.
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" style="border-color: rgba(255, 61, 0, 0.2);">
+
+                    <!-- Delete Form -->
+                    <form method="post" class="tech-form">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% for error in field.errors %}
+                            <div class="error-message">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                        <div class="form-actions d-flex gap-3">
+                            <button type="submit" class="btn btn-danger flex-grow-1">
+                                <i class="fas fa-trash me-2"></i>Delete Product
+                            </button>
+                            <a href="{% url 'product_details' product.pk %}" 
+                               class="btn btn-secondary flex-grow-1">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

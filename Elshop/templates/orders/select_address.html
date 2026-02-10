@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Select Address
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="tech-card">
+                <div class="card-header">
+                    <h2 class="card-title">Select Shipping Address</h2>
+                    <p class="card-subtitle">Choose an existing address or add a new one</p>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="tech-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="form-label">Available Addresses</label>
+                            <div class="address-list">
+                                {% for address in addresses %}
+                                <div class="address-item">
+                                    <label class="address-label">
+                                        <input type="radio" name="address" value="{{ address.id }}" class="address-radio">
+                                        <div class="address-details">
+                                            <span class="address-name">{{ address.full_name }}</span>
+                                            <span class="address-text">{{ address.address_line1 }}</span>
+                                            <span class="address-text">{{ address.city }}, {{ address.state }} - {{ address.pincode }}</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-check-circle me-2"></i>Select Address
+                            </button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-4">
+                        <a href="{% url 'add_address' %}?next={{request.path}}" class="btn btn-outline-primary">
+                            <i class="fas fa-plus-circle me-2"></i>Add New Address
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

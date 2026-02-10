@@ -1,0 +1,128 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block title %}
+Contact GameLoot
+{% endblock %}
+
+{% block content %}
+<section class="contact-section">
+    <div class="container">
+
+        <!-- Header -->
+        <div class="contact-header text-center mb-5">
+            <h2>Contact PlayZoneX</h2>
+            <p>Need help with an order, product, or support? We’ve got you covered.</p>
+        </div>
+
+        <div class="row gy-4 align-items-center">
+
+            <!-- Contact Info -->
+            <div class="col-lg-5">
+                <div class="contact-info">
+                    <h4>Get in Touch</h4>
+                    <p>
+                        Whether you have questions about consoles, games, accessories,
+                        or your order status — our dedicated support team is here
+                        to help you every step of the way.
+                    </p>
+
+                    <ul class="contact-details">
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>India</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <span>support@gameloot.com</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone"></i>
+                            <span>+91 98765 43210</span>
+                        </li>
+                    </ul>
+
+                    <div class="contact-social">
+                        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="col-lg-7">
+                <div class="tech-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Send Us a Message</h2>
+                        <p class="card-subtitle">
+                            Have a question or feedback? Drop us a message and we’ll respond quickly.
+                        </p>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" class="tech-form">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name" class="form-label">Your Name</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="name"
+                                            placeholder="Enter your name"
+                                            required
+                                        >
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="email" class="form-label">Your Email</label>
+                                        <input
+                                            type="email"
+                                            class="form-control"
+                                            id="email"
+                                            placeholder="Enter your email"
+                                            required
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="subject" class="form-label">Subject</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="subject"
+                                    placeholder="Order issue, product query, partnership, etc."
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="message" class="form-label">Your Message</label>
+                                <textarea
+                                    class="form-control"
+                                    id="message"
+                                    rows="5"
+                                    placeholder="Tell us how we can help you"
+                                    required
+                                ></textarea>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    Send Message
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

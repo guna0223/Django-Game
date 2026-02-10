@@ -1,0 +1,48 @@
+{% load static %}
+
+<div id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel">
+    <!-- Indicators -->
+    <div class="carousel-indicators">
+        {% for image in carousel_images %}
+        <button type="button" 
+                data-bs-target="#heroCarousel" 
+                data-bs-slide-to="{{ forloop.counter0 }}" 
+                class="{% if forloop.first %}active{% endif %}" 
+                aria-current="{% if forloop.first %}true{% endif %}"
+                aria-label="Slide {{ forloop.counter }}">
+        </button>
+        {% endfor %}
+    </div>
+
+    <!-- Slides -->
+    <div class="carousel-inner">
+        {% for image in carousel_images %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="5000">
+            <img src="{{ image.img.url }}" class="d-block w-100 slide-image" alt="{{ image.title }}">
+            <div class="slide-overlay"></div>
+            <div class="carousel-caption-left">
+                {% if image.title %}<h5 class="slide-title">{{ image.title }}</h5>{% endif %}
+                {% if image.caption %}<p class="slide-caption">{{ image.caption }}</p>{% endif %}
+            </div>
+        </div>
+        {% endfor %} 
+    </div>
+
+    <!-- Navigation -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="control-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+        </span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="control-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6"/>
+            </svg>
+        </span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>

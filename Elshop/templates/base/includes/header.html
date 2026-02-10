@@ -1,0 +1,138 @@
+{% load static %}
+<header class="fixed-top">
+    <nav id="main-navbar" class="navbar navbar-expand-lg navbar-dark tech-navbar">
+        <div class="container-fluid">
+
+            <!-- BRAND -->
+            <a class="navbar-brand fw-bold" href="{% url 'home_page' %}">
+                <span>PlayZoneX</span>
+            </a>
+
+            <!-- TOGGLER -->
+            <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- COLLAPSE -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                <!-- CENTER LINKS -->
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if current_page == 'home' %}active{% endif %}"
+                           href="{% url 'home_page' %}">
+                            Home
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {% if current_page == 'about' %}active{% endif %}"
+                           href="{% url 'about_page' %}">
+                            About
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if current_page == 'contact' %}active{% endif %}"
+                           href="{% url 'contact_page' %}">
+                            Contact
+                        </a>
+                    </li>
+
+                    {% if user.is_staff %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           role="button"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Manage
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item"
+                                   href="{% url 'products' %}">
+                                    Products
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+
+                <!-- SEARCH -->
+                <form class="d-flex me-3" method="get" action="{% url 'search_products' %}">
+                    <input class="form-control"
+                           type="search"
+                           name="q"
+                           value="{{ query }}"
+                           placeholder="Search products..." aria-label="search">
+                    <button class="btn  mt-2 ms-2 cart-icon" type="submit">
+                        <i class="bi bi-search "></i>
+                    </button>
+                </form>
+
+                <!-- PROFILE & CART -->
+                <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+
+                    {% if not user.is_staff %}
+                    <li class="nav-item position-relative me-3">
+                        <a class="nav-link cart-icon" href="{% url 'view_cart' %}">
+                            <i class="bi bi-cart3"></i>
+                            {% if user.is_authenticated %}
+                            <span class="cart-badge"
+                                  id="cart-count"
+                                  data-count-url="{% url 'cart_count' %}">
+                                0
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center"
+                           href="#"
+                           role="button"
+                           data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-2"></i>
+                            {% if user.is_authenticated %}
+                                {{ user.username|capfirst }}
+                            {% else %}
+                                Account
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            {% if user.is_authenticated %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'order_history' %}">
+                                    <i class="bi bi-clock-history me-2"></i>Order History
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{% url 'logout' %}" method="post">
+                                    {% csrf_token %}
+                                    <button class="dropdown-item text-danger">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                    </button>
+                                </form>
+                            </li>
+                            {% else %}
+                            <li><a class="dropdown-item" href="{% url 'signup' %}"><i class="bi bi-person-plus me-2"></i>Register</a></li>
+                            <li><a class="dropdown-item" href="{% url 'signin' %}"><i class="bi bi-box-arrow-in-right me-2"></i>Login</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+</header>

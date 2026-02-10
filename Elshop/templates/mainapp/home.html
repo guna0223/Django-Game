@@ -1,0 +1,26 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block body_class %}home-page{% endblock %}
+
+
+{% block content %}
+<!-- Hero Background -->
+<div class="hero-bg"></div>
+
+<section id="home-carousel-section" class="home-carousel-section">
+    {% include 'mainapp/includes/carousel.html' %}
+</section>
+
+<section id="home-products-section" class="py-5 fade-in">
+    <div class="container-fluid px-4">
+        {% include 'products/includes/productSection.html' %}
+    </div>
+</section>
+
+{% endblock %}

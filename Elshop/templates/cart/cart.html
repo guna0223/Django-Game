@@ -1,0 +1,66 @@
+{% extends 'base/base.html' %}
+
+{% block title %}My Cart{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<section id="cart-page" class="container py-5 cart-section" data-plus-url="{% url 'increase_cart_item' %}"
+    data-minus-url="{% url 'decrease_cart_item' %}" data-remove-url="{% url 'remove_cart_item' %}">
+
+    <h2 class="cart-title fade-in">🛒 My Cart</h2>
+
+    {% if cart_items %}
+
+    <div class="row">
+
+        <!-- LEFT: items -->
+        <div class="col-lg-8 cart-items">
+
+            {% for item in cart_items %}
+            <div class="cart-item fade-in-up">
+            {% include 'cart/includes/product_cart_item.html' %}
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <!-- RIGHT: summary -->
+        <div class="col-lg-4">
+
+            <div class="cart-summary card shadow-sm sticky-top fade-in">
+                <div class="card-body">
+
+                    <h5 class="summary-title">Order Summary</h5>
+
+                    <div class="summary-row">
+                        <span>Total Items</span>
+                        <span id="summary-total-items">{{ total_quantity }}</span>
+                    </div>
+
+                    <div class="summary-row total">
+                        <span>Total Price</span>
+                        <span id="summary-total-price">₹{{ total_price |floatformat:2 }}</span>
+                    </div>
+
+                    <hr>
+
+                    <a href="{% url 'create_order' %}" class="btn btn-primary w-100 fw-bold">
+                        Proceed to Checkout
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% else %}
+
+    {% include 'cart/includes/empty_cart.html' %}
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

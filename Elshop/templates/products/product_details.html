@@ -1,0 +1,110 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Product Details{% endblock %}
+
+{% block content %}
+
+<section id="product-details-section" class="container py-5 product-details-section fade-in"
+    data-add-url="{% url 'add_to_cart' %}" data-product-id="{{ product.id }}">
+
+    <!-- ONE ROW -->
+    <div class="row g-4 align-items-stretch">
+
+        <!-- LEFT SIDE -->
+        <div class="col-lg-7 fade-in-left d-flex">
+            <div class="product-gallery w-100">
+                {% include 'products/includes/productImageCarousel.html' %}
+                {% include 'products/includes/youtube_embed.html' %}
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="col-lg-5 col-md-12 fade-in-right d-flex">
+            <div class="product-info-card w-100">
+                <img src="{{ product.thumbnail.url }}" class="card-img-top product-thumb" alt="{{ product.title }}">
+                <h2 class="product-title">{{ product.title }}</h2>
+
+                <p class="product-desc">
+                    {{ product.desc }}
+                </p>
+
+                <div class="price-box">
+                    <span class="old-price">&#8377; {{ product.price }}</span>
+                    <span class="new-price">&#8377; {{ product.offer_price|floatformat:2 }}</span>
+                    <span class="discount">
+                        ({{ product.discount }}% OFF)
+                    </span>
+                    {% if not user.is_staff %}
+                    <button class="btn btn-primary detail-add-to-cart" type="button">
+                        <i class="bi bi-cart"></i> Add to Cart
+                    </button>
+                    {% endif %}
+                </div>
+
+                <div class="action-buttons mt-4">
+                    {% if not user.is_staff %}
+                    <!-- <div class="luxury-features mt-3 d-flex" style="display: flex !important;">
+                        <div class="feature-item">
+                            <i class="bi bi-truck"></i>
+                            <span>Fast Delivery (2–4 Days)</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-shield-check"></i>
+                            <span>Safe & Secure Packaging</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-arrow-repeat"></i>
+                            <span>Easy Return Available</span>
+                        </div>
+                    </div> -->
+
+                    {% else %}
+                    <a href="{% url 'edit_product' product.pk %}" class="btn btn-warning">
+                        <i class="bi bi-pencil-square"></i>
+
+                    </a>
+
+                    <a href="{% url 'delete_product' product.pk %}" class="btn btn-danger">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
+
+                    <a href="{% url 'add_images' product.id %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-images"></i>
+                    </a>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================= RELATED PRODUCTS ================= -->
+<section class="related-products-section">
+
+    <h2 class="game-categories text-center mb-4">
+        More Products You May Like
+    </h2>
+
+    <div class="horizontal-scroll-container">
+        <div class="horizontal-scroll-wrapper">
+
+            {% for product in products %}
+
+            <div class="scroll-card-item">
+                {% include 'products/includes/productCard.html' %}
+            </div>
+
+            {% empty %}
+            <div class="no-products-message">
+                <p class="text-muted">No Products Available</p>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}

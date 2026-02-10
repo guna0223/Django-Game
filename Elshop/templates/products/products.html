@@ -1,0 +1,28 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Products
+{% endblock %}
+
+{% block content %}
+<section class="products-header py-5 text-center fade-in">
+    {% if user.is_staff %}
+    <div class="container">
+        <h1 class="display-4 fw-bold gradient-text mb-3">Our Products</h1>
+        <p class="lead text-muted">Discover premium electronics accessories</p>
+
+        <a href="{% url 'add_product' %}" class="btn btn-primary mt-3">
+            <i class="bi bi-plus-circle"></i> Add Product
+        </a>
+        {% endif %}
+    </div>
+
+</section>
+
+<section>
+    <div>
+        {% include 'products/includes/productSection.html' %}
+    </div>
+</section>
+
+{% endblock %}

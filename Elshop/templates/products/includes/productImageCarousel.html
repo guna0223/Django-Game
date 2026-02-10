@@ -1,0 +1,110 @@
+<!-- IMAGE + VIDEO CAROUSEL -->
+
+<div id="productImageCarousel" class="carousel slide product-carousel"  
+    data-target-image-pk="{{ image_pk|default:'' }}" data-target-video-pk="{{ video_pk|default:'' }}">
+
+    {% if product.images.exists or product.videos.exists %}
+
+    <div class="carousel-inner">
+
+
+        {% for video in product.videos.all %}
+        {% if video.video_code %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}" data-media-id="{{ video.pk }}"
+            data-media-type="video">
+            <div class="ratio ratio-16x9 product-video-ratio">
+                <iframe width="839" height="472" src="https://www.youtube.com/embed/{{video.video_code}}"
+                    title="Star Wars Jedi: Survivor - Final Gameplay Trailer" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+
+            {% if user.is_staff %}
+            <div class="carousel-actions edit-del-btn">
+                <a href="{% url 'edit_product_video' video.pk %}" class="btn btn-light edit">
+                    <i class="bi bi-pen"></i>
+                </a>
+                <a href="{% url 'delete_product_video' video.pk %}" class="btn btn-light delete text-danger">
+                    <i class="bi bi-trash-fill"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+
+
+        {% for media in product.images.all %}
+        {% if media.img %}
+        <div class="carousel-item {% if not product.videos.exists and forloop.first %}active{% endif %}"
+            data-media-id="{{ media.pk }}" data-media-type="image">
+            <img src="{{ media.img.url }}" class="d-block w-100" alt="{{ media.caption }}">
+
+            <div class="carousel-caption-wrapper">
+                {% if media.caption %}
+                <div class="carousel-caption">
+                    <h5 class="carousel-title">{{ media.caption }}</h5>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if user.is_staff %}
+            <div class="carousel-actions edit-del-btn">
+                <a href="{% url 'edit_pro_image' media.pk %}" class="btn btn-light edit">
+                    <i class="bi bi-pen"></i>
+                </a>
+                <a href="{% url 'del_pro_image' media.pk %}" class="btn btn-light delete text-danger">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+
+    </div>
+
+    <!-- CONTROLS -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#productImageCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#productImageCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+
+    {% else %}
+
+    <!-- NO IMAGE / VIDEO -->
+    <div class="d-flex align-items-center justify-content-center no-media-placeholder">
+        <div class="text-center">
+            <p class="mb-2">No product media uploaded</p>
+            <small class="text-info">
+                Upload images or videos to showcase this product
+            </small>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+
+{% if image_pk or video_pk %}
+<!-- Note: Carousel scroll script has been moved to script.js -->
+{% endif %}
+
+<!-- Prevent YouTube iframe navigation -->
+<script>
+    (function () {
+        // Prevent clicks inside YouTube iframes from navigating away
+        document.addEventListener('click', function (e) {
+            var target = e.target;
+            while (target && target !== document) {
+                if (target.tagName === 'IFRAME' && target.src && target.src.includes('youtube.com/embed')) {
+                    // Allow the click to pass through for video controls
+                    return;
+                }
+                target = target.parentElement;
+            }
+        }, true);
+    })();
+</script>

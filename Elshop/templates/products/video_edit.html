@@ -1,0 +1,63 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+Edit Product Video
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4 align-items-start">
+        <!-- LEFT: Product Image Carousel -->
+        <div class="col-lg-6">
+            {% include 'products/includes/productImageCarousel.html' %}
+        </div>
+
+        <!-- RIGHT: Edit Video Form -->
+        <div class="col-lg-6">
+            <div class="tech-card">
+                <div class="card-header">
+                    <h2 class="card-title">Edit Product Video</h2>
+                    <p class="card-subtitle">Update the video details</p>
+                </div>
+                <div class="card-body">
+                    <!-- Current video preview -->
+                    <div class="ratio ratio-16x9 mb-4" 
+                         style="background:#000; border-radius:12px; overflow:hidden; border: 1px solid rgba(255, 61, 0, 0.2);">
+                        <iframe
+                            src="https://www.youtube.com/embed/{{ video.video_code }}?rel=0"
+                            title="{{ video.title }}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+
+                    <form method="post" class="tech-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_title" class="form-label">Video Title</label>
+                            <input type="text" name="title" id="id_title" class="form-control" 
+                                   value="{{ video.title }}" placeholder="Enter video title">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_video_code" class="form-label">YouTube Video Code</label>
+                            <input type="text" name="video_code" id="id_video_code" class="form-control" 
+                                   value="{{ video.video_code }}" placeholder="e.g., dQw4w9WgXcQ">
+                            <small class="form-text">Enter the YouTube video code (the part after youtube.com/watch?v=)</small>
+                        </div>
+                        <div class="form-actions d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-primary flex-grow-1">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                            <a href="{% url 'product_details' video.product.pk %}"
+                                class="btn btn-secondary flex-grow-1">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
