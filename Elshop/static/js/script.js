@@ -1,3 +1,25 @@
+/* =========================================================================
+   GAME SHOP - MAIN JAVASCRIPT
+   =========================================================================
+
+   ========================================================================= */
+/* =========================================================================
+   SECTION CODES:
+   - DOM Init: Lines 1-12
+   - Navbar Scroll: Lines 14-30
+   - Product Cards: Lines 32-48
+   - Cart Animations: Lines 50-166
+   - Add to Cart: Lines 187-250
+   - Product Detail: Lines 252-306
+   - Search Effects: Lines 308-324
+   - Loading Animations: Lines 326-352
+   - Animation Utils: Lines 354-406
+   - Utility Functions: Lines 408-512
+   - Smooth Scroll: Lines 514-529
+   - Intersection Observer: Lines 531-556
+   - Product Carousel: Lines 558-656
+   ========================================================================= */
+
 /* =====================================================
    GAMING JAVASCRIPT - Enhanced Interactions
    ===================================================== */

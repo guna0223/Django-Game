@@ -1,3 +1,22 @@
+/* =========================================================================
+   GAME SHOP - MAIN STYLESHEET
+   =========================================================================
+  
+   ========================================================================= */
+/* =========================================================================
+   SECTION CODES:
+   - Fonts & Variables: Lines 1-64
+   - Base Reset: Lines 66-163
+   - Navbar: Lines 164-377
+   - Dropdowns: Lines 378-436
+   - Buttons: Lines 438-502
+   - Cards: Lines 504-602
+   - Product Cards: Lines 567-741
+   - Forms: Lines 743-923
+   - Sections: Lines 925-959
+   - Carousel: Lines 961-1000
+   ========================================================================= */
+
 /* Google Fonts - Gaming Typography */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
