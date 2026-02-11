@@ -28,7 +28,7 @@
 </head>
 
 <body>
-    {% if 'login' in request.path or request.session.login_success %}
+    {% if 'login' in request.path %}
         {% include 'base/includes/loading.html' %}
     {% endif %}   
     <!-- header -->

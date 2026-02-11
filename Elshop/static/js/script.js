@@ -1,28 +1,3 @@
-/* =========================================================================
-    GAME SHOP - MAIN JAVASCRIPT
-    =========================================================================
-    Line: 1-20 | Total Lines: 920
-
-    ========================================================================= */
-/* =========================================================================
-    SECTION CODES:
-    1-20   : Header Info
-    1-12   : DOM Init
-    14-30  : Navbar Scroll
-    32-48  : Product Cards
-    50-166 : Cart Animations
-    187-250: Add to Cart
-    252-306: Product Detail
-    308-324: Search Effects
-    326-352: Animation Utils
-    354-406: Utility Functions
-    408-512: Smooth Scroll
-    514-556: Intersection Observer
-    558-656: Product Carousel
-    658-720: Duplicate Product Detail Handler
-    720-920: Spider-Loader Animation
-    ========================================================================= */
-
 /* =====================================================
     GAMING JAVASCRIPT - Enhanced Interactions
     ===================================================== */
@@ -720,16 +695,14 @@ document.addEventListener('DOMContentLoaded', function () {
    LOADER INITIALIZATION
    ===================================================== */
 
-// Check if loader should run (login page or offline event)
+// Check if loader should run (login success or offline event)
 function shouldShowLoader() {
     const path = window.location.pathname;
     // Check if on login page
     const isLoginPage = path.includes('/login') || path.includes('/accounts/login');
     // Check if explicitly requested
     const showLoader = sessionStorage.getItem('showSpiderLoader');
-    // Check if login was successful
-    const loginSuccess = sessionStorage.getItem('loginSuccess');
-    return isLoginPage || showLoader === 'true' || loginSuccess === 'true';
+    return isLoginPage || showLoader === 'true';
 }
 
 // Wait for DOM to be fully loaded before initializing 
@@ -762,9 +735,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    // Clear session flags after showing
+    // Clear session flag after showing
     sessionStorage.removeItem('showSpiderLoader');
-    sessionStorage.removeItem('loginSuccess');
     
     /* =====================================================
        NETWORK OFFLINE DETECTION
