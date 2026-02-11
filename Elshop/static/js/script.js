@@ -1,31 +1,31 @@
 /* =========================================================================
-   GAME SHOP - MAIN JAVASCRIPT
-   =========================================================================
-   Line: 1-20 | Total Lines: 720
+    GAME SHOP - MAIN JAVASCRIPT
+    =========================================================================
+    Line: 1-20 | Total Lines: 920
 
-   ========================================================================= */
+    ========================================================================= */
 /* =========================================================================
-   SECTION CODES:
-   1-20   : Header Info
-   1-12   : DOM Init
-   14-30  : Navbar Scroll
-   32-48  : Product Cards
-   50-166 : Cart Animations
-   187-250: Add to Cart
-   252-306: Product Detail
-   308-324: Search Effects
-   326-352: Loading Animations
-   354-406: Animation Utils
-   408-512: Utility Functions
-   514-529: Smooth Scroll
-   531-556: Intersection Observer
-   558-656: Product Carousel
-   658-720: Duplicate Product Detail Handler
-   ========================================================================= */
+    SECTION CODES:
+    1-20   : Header Info
+    1-12   : DOM Init
+    14-30  : Navbar Scroll
+    32-48  : Product Cards
+    50-166 : Cart Animations
+    187-250: Add to Cart
+    252-306: Product Detail
+    308-324: Search Effects
+    326-352: Animation Utils
+    354-406: Utility Functions
+    408-512: Smooth Scroll
+    514-556: Intersection Observer
+    558-656: Product Carousel
+    658-720: Duplicate Product Detail Handler
+    720-920: Spider-Loader Animation
+    ========================================================================= */
 
 /* =====================================================
-   GAMING JAVASCRIPT - Enhanced Interactions
-   ===================================================== */
+    GAMING JAVASCRIPT - Enhanced Interactions
+    ===================================================== */
 
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function () {
@@ -33,12 +33,11 @@ document.addEventListener('DOMContentLoaded', function () {
     initProductCards();
     initCartAnimations();
     initSearchEffects();
-    initLoadingAnimations();
 });
 
 /* =====================================================
-   NAVBAR SCROLL EFFECT
-   ===================================================== */
+    NAVBAR SCROLL EFFECT
+    ===================================================== */
 
 function initNavbarScroll() {
     const navbar = document.getElementById('main-navbar');
@@ -55,8 +54,8 @@ function initNavbarScroll() {
 }
 
 /* =====================================================
-   PRODUCT CARDS - Gaming Hover Effects
-   ===================================================== */
+    PRODUCT CARDS - Gaming Hover Effects
+    ===================================================== */
 
 function initProductCards() {
     const productCards = document.querySelectorAll('.product-card');
@@ -73,8 +72,8 @@ function initProductCards() {
 }
 
 /* =====================================================
-   CART OPERATIONS WITH ANIMATIONS
-   ===================================================== */
+    CART OPERATIONS WITH ANIMATIONS
+    ===================================================== */
 
 function initCartAnimations() {
     const cart_count = document.getElementById("cart-count");
@@ -275,8 +274,8 @@ if (products_container) {
 }
 
 /* =====================================================
-   PRODUCT DETAIL - Add to Cart
-   ===================================================== */
+    PRODUCT DETAIL - Add to Cart
+    ===================================================== */
 
 const detailSection = document.getElementById('product-details-section');
 
@@ -331,8 +330,8 @@ if (detailSection) {
 }
 
 /* =====================================================
-   SEARCH EFFECTS
-   ===================================================== */
+    SEARCH EFFECTS
+    ===================================================== */
 
 function initSearchEffects() {
     const searchInputs = document.querySelectorAll('.search-box input, .form-control[type="search"]');
@@ -349,86 +348,8 @@ function initSearchEffects() {
 }
 
 /* =====================================================
-   LOADING ANIMATIONS - SPIDER-MAN WEB SHOOTER
-   ===================================================== */
-
-function initLoadingAnimations() {
-    // Spider-Man Web Shooter Loader
-    const loader = document.getElementById('spider-loader');
-    const progressPercent = document.querySelector('.progress-percent');
-    
-    if (!loader) {
-        // Fallback: Add loading state to forms if no loader found
-        const forms = document.querySelectorAll('form');
-        forms.forEach(form => {
-            form.addEventListener('submit', function (e) {
-                if (this.dataset.noload === 'true') return;
-                const submitBtn = this.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    const originalText = submitBtn.innerText;
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<span class="loading"></span> Processing...';
-                    setTimeout(() => {
-                        submitBtn.disabled = false;
-                        submitBtn.innerText = originalText;
-                    }, 5000);
-                }
-            });
-        });
-        return;
-    }
-    
-    // Simulated loading progress
-    let progress = 0;
-    const duration = 3000;
-    const interval = 30;
-    const increment = 100 / (duration / interval);
-    
-    const progressInterval = setInterval(() => {
-        progress += increment;
-        
-        if (progress >= 100) {
-            progress = 100;
-            clearInterval(progressInterval);
-            setTimeout(() => {
-                hideLoader(loader);
-            }, 500);
-        }
-        
-        if (progressPercent) {
-            progressPercent.textContent = Math.round(progress) + '%';
-        }
-    }, interval);
-    
-    triggerConnectors();
-}
-
-function triggerConnectors() {
-    const connectors = document.querySelectorAll('.web-connector');
-    
-    connectors.forEach((connector, index) => {
-        setTimeout(() => {
-            connector.style.animation = 'none';
-            connector.offsetHeight;
-            connector.style.animation = 'connector-appear 0.3s ease-out forwards';
-        }, index * 700 + 500);
-    });
-}
-
-function hideLoader(loader) {
-    loader.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-    loader.style.opacity = '0';
-    loader.style.transform = 'scale(1.1)';
-    
-    setTimeout(() => {
-        loader.style.display = 'none';
-        document.body.classList.add('loaded');
-    }, 500);
-}
-
-/* =====================================================
-   ANIMATION UTILITIES
-   ===================================================== */
+    ANIMATION UTILITIES
+    ===================================================== */
 
 function animateUpdate(element) {
     element.style.transform = 'scale(1.3)';
@@ -481,8 +402,8 @@ function animateRemove(element) {
 }
 
 /* =====================================================
-   UTILITY FUNCTIONS
-   ===================================================== */
+    UTILITY FUNCTIONS
+    ===================================================== */
 
 // Get cookie by name
 function getCookie(name) {
@@ -587,8 +508,8 @@ style.textContent = `
 document.head.appendChild(style);
 
 /* =====================================================
-   SMOOTH SCROLL FOR ANCHOR LINKS
-   ===================================================== */
+    SMOOTH SCROLL FOR ANCHOR LINKS
+    ===================================================== */
 
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -604,8 +525,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 /* =====================================================
-   INTERSECTION OBSERVER FOR ANIMATIONS
-   ===================================================== */
+    INTERSECTION OBSERVER FOR ANIMATIONS
+    ===================================================== */
 
 // Add fade-in animation to elements
 const observerOptions = {
@@ -634,15 +555,15 @@ document.querySelectorAll('.card, .product-card').forEach((el, index) => {
 // out of stock btn that functions
 
 /* =====================================================
-   PRODUCT IMAGE CAROUSEL NAVIGATION
-   (Moved from: productImageCarousel.html)
-   
-   This function scrolls the carousel to a specific media item
-   when editing or deleting images/videos.
-   Data attributes are passed from Django template:
-   - data-target-image-pk: Image PK to scroll to
-   - data-target-video-pk: Video PK to scroll to
-   ===================================================== */
+    PRODUCT IMAGE CAROUSEL NAVIGATION
+    (Moved from: productImageCarousel.html)
+    
+    This function scrolls the carousel to a specific media item
+    when editing or deleting images/videos.
+    Data attributes are passed from Django template:
+    - data-target-image-pk: Image PK to scroll to
+    - data-target-video-pk: Video PK to scroll to
+    ===================================================== */
 
 function initProductCarouselScroll() {
     const carousel = document.getElementById('productImageCarousel');
@@ -771,140 +692,199 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+/* =========================================================================
+   SPIDER-MAN WEB SHOOTER LOADER ANIMATION
+   =========================================================================
+   
+   This file controls the Spider-Man themed loading animation that appears
+   when pages load. The animation features:
+   
+   Features:
+   - Web shooting animation from left to right
+   - Elastic/stretching web effect
+   - Progress bar that fills as content loads
+   - Connector points appearing sequentially
+   - Rotating text layers (SPINNING → WEAVING → LOADING)
+   - Floating web particles
+   - Smooth completion animation
+   
+   Usage:
+   - Include loading.html in the template where you want the loader
+   - The loader automatically hides when progress reaches 100%
+   - Main content fades in after loader completes
+   
+   ========================================================================= */
+
 /* =====================================================
-   SPIDER WEB BACKGROUND ANIMATION
+   LOADER INITIALIZATION
    ===================================================== */
-document.addEventListener('DOMContentLoaded', function () {
-    const canvas = document.getElementById('spider-web-canvas');
-    if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    let mouseX = 0, mouseY = 0;
-    let points = [];
-    const numPoints = 8;
-    const maxDistance = 200;
-
-    function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-        initPoints();
-    }
-
-    function initPoints() {
-        points = [];
-        for (let i = 0; i < numPoints; i++) {
-            points.push({
-                x: Math.random() * width,
-                y: Math.random() * height,
-                vx: (Math.random() - 0.5) * 0.5,
-                vy: (Math.random() - 0.5) * 0.5
-            });
+// Wait for DOM to be fully loaded before initializing 
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Get loader elements
+    const spiderLoader = document.getElementById('spider-loader');
+    const progressFill = document.getElementById('progress-fill');
+    const progressWeb = document.getElementById('progress-web');
+    const percentValue = document.getElementById('percent-value');
+    const webParticles = document.getElementById('web-particles');
+    
+    /* =====================================================
+       PARTICLE GENERATION
+       Creates floating web particles for atmosphere
+       ===================================================== */
+    
+    function createParticles() {
+        // Create 15 random particles
+        for (let i = 0; i < 15; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'web-particle';
+            // Random horizontal position
+            particle.style.left = Math.random() * 100 + '%';
+            // Random animation delay
+            particle.style.animationDelay = Math.random() * 4 + 's';
+            // Random duration
+            particle.style.animationDuration = (3 + Math.random() * 3) + 's';
+            webParticles.appendChild(particle);
         }
     }
-
-    document.addEventListener('mousemove', function (e) {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
-
-    function drawWeb() {
-        ctx.clearRect(0, 0, width, height);
-        ctx.strokeStyle = '#ff3d00';
-        ctx.lineWidth = 1;
-
-        // Draw lines between points
-        for (let i = 0; i < points.length; i++) {
-            for (let j = i + 1; j < points.length; j++) {
-                const dx = points[i].x - points[j].x;
-                const dy = points[i].y - points[j].y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-
-                if (dist < maxDistance) {
-                    ctx.beginPath();
-                    ctx.moveTo(points[i].x, points[i].y);
-                    ctx.lineTo(points[j].x, points[j].y);
-                    ctx.globalAlpha = 1 - dist / maxDistance;
-                    ctx.stroke();
-                }
+    
+    /* =====================================================
+       PROGRESS SIMULATION
+       Simulates loading progress with variable speed
+       ===================================================== */
+    
+    let progress = 0;
+    let currentSpeed = 100;
+    const baseSpeed = 80;
+    
+    // Main progress update function
+    function updateProgress() {
+        // Phase 1: Slow start (0-35%)
+        if (progress < 35) {
+            currentSpeed = baseSpeed + Math.random() * 50;
+        }
+        // Phase 2: Speed up (35-70%)
+        else if (progress < 70) {
+            currentSpeed = baseSpeed - 30 + Math.random() * 40;
+        }
+        // Phase 3: Nearly complete (70-90%)
+        else if (progress < 90) {
+            currentSpeed = baseSpeed - 50 + Math.random() * 30;
+        }
+        // Phase 4: Final stretch (90-100%)
+        else {
+            currentSpeed = baseSpeed - 60 + Math.random() * 20;
+        }
+        
+        // Increment progress with randomness
+        const increment = Math.random() * 5 + 2;
+        progress = Math.min(progress + increment, 100);
+        
+        /* =====================================================
+           UI UPDATES
+           Update progress bar, web, and percentage display
+           ===================================================== */
+        
+        // Update main progress bar
+        if (progressFill) {
+            progressFill.style.width = progress + '%';
+        }
+        
+        // Update progress web (starts at 20%)
+        if (progressWeb && progress > 20) {
+            const webProgress = Math.min((progress - 20) * 1.25, 100);
+            progressWeb.style.width = webProgress + '%';
+        }
+        
+        // Update percentage counter
+        if (percentValue) {
+            percentValue.textContent = Math.floor(progress);
+            
+            // Pulse effect on milestone updates (every 10%)
+            if (Math.floor(progress) % 10 === 0) {
+                percentValue.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    percentValue.style.transform = 'scale(1)';
+                }, 100);
             }
         }
-
-        // Draw lines from points to mouse
-        for (let i = 0; i < points.length; i++) {
-            const dx = mouseX - points[i].x;
-            const dy = mouseY - points[i].y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < 300) {
-                ctx.beginPath();
-                ctx.moveTo(points[i].x, points[i].y);
-                ctx.lineTo(mouseX, mouseY);
-                ctx.globalAlpha = (1 - dist / 300) * 0.3;
-                ctx.stroke();
-            }
-        }
-
-        // Draw points
-        ctx.fillStyle = '#ff3d00';
-        for (let i = 0; i < points.length; i++) {
-            ctx.beginPath();
-            ctx.arc(points[i].x, points[i].y, 3, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        ctx.globalAlpha = 1;
-    }
-
-    function updatePoints() {
-        for (let i = 0; i < points.length; i++) {
-            points[i].x += points[i].vx;
-            points[i].y += points[i].vy;
-
-            // Bounce off edges
-            if (points[i].x < 0 || points[i].x > width) points[i].vx *= -1;
-            if (points[i].y < 0 || points[i].y > height) points[i].vy *= -1;
-
-            // Move towards mouse slightly
-            const dx = mouseX - points[i].x;
-            const dy = mouseY - points[i].y;
-            points[i].x += dx * 0.001;
-            points[i].y += dy * 0.001;
+        
+        // Continue or complete
+        if (progress < 100) {
+            setTimeout(updateProgress, currentSpeed);
+        } else {
+            completeLoading();
         }
     }
-
-    function animate() {
-        drawWeb();
-        updatePoints();
-        requestAnimationFrame(animate);
-    }
-
-    window.addEventListener('resize', resize);
-    resize();
-    animate();
-});
-
-
-// Loading page scripts
-
-    document.addEventListener("DOMContentLoaded", function () {
-    const loader = document.getElementById("spider-column-loader");
-
-    // Hide loader when everything is ready
-    window.addEventListener("load", function () {
+    
+    /* =====================================================
+       COMPLETION HANDLER
+       Handles loader completion animation
+       ===================================================== */
+    
+    function completeLoading() {
+        if (spiderLoader) {
+            spiderLoader.classList.add('loading-complete');
+        }
+        
+        // Wait for completion animation then hide
         setTimeout(() => {
-            loader.style.display = "none";
-        }, 400);
-    });
-});
-
-    // Show loader on form submit (image upload / any submit)
-    document.addEventListener("submit", function (e) {
-    const loader = document.getElementById("spider-column-loader");
-    const form = e.target;
-
-    if (form.checkValidity()) {
-        loader.style.display = "flex";
+            hideLoader();
+        }, 800);
+    }
+    
+    /* =====================================================
+       LOADER HIDDEN
+       Fades out loader and shows main content
+       ===================================================== */
+    
+    function hideLoader() {
+        if (spiderLoader) {
+            spiderLoader.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            spiderLoader.style.opacity = '0';
+            spiderLoader.style.transform = 'scale(1.1)';
+            
+            setTimeout(() => {
+                spiderLoader.style.display = 'none';
+                
+                // Show main content with fade in
+                const mainContent = document.querySelector('main');
+                if (mainContent) {
+                    mainContent.style.transition = 'opacity 0.5s ease';
+                    mainContent.style.opacity = '1';
+                }
+                
+                // Show navbar
+                const navbar = document.querySelector('.tech-navbar');
+                if (navbar) {
+                    navbar.style.transition = 'opacity 0.5s ease';
+                    navbar.style.opacity = '1';
+                }
+            }, 500);
+        }
+    }
+    
+    /* =====================================================
+       INITIALIZE LOADER
+       Starts the loading animation sequence
+       ===================================================== */
+    
+    function initLoader() {
+        createParticles();
+        
+        // Start progress after initial setup
+        setTimeout(() => {
+            updateProgress();
+        }, 500);
+    }
+    
+    // Only initialize if loader element exists
+    if (spiderLoader) {
+        initLoader();
     }
 });
 
+/* =========================================================================
+   END OF SPIDER-LOADER.JS (Merged into script.js)
+   ========================================================================= */
