@@ -459,7 +459,7 @@ function showNotification(message, type = 'success') {
         right: 20px;
         z-index: 10000;
         animation: slideIn 0.3s ease;
-        background: ${type === 'success' ? 'rgba(0, 230, 118, 0.9)' : 'rgba(255, 64, 129, 0.9)'};
+        background: ${type === 'success' ? 'rgba(0, 230, 118, 0.9)' : 'rgba(255, 61, 0, 0.9)' };
         border: none;
         color: white;
         font-family: 'Rajdhani', sans-serif;
@@ -719,5 +719,118 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+});
+
+/* =====================================================
+   SPIDER WEB BACKGROUND ANIMATION
+   ===================================================== */
+document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.getElementById('spider-web-canvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let mouseX = 0, mouseY = 0;
+    let points = [];
+    const numPoints = 8;
+    const maxDistance = 200;
+    
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        initPoints();
+    }
+    
+    function initPoints() {
+        points = [];
+        for (let i = 0; i < numPoints; i++) {
+            points.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5
+            });
+        }
+    }
+    
+    document.addEventListener('mousemove', function(e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+    
+    function drawWeb() {
+        ctx.clearRect(0, 0, width, height);
+        ctx.strokeStyle = '#ff3d00';
+        ctx.lineWidth = 1;
+        
+        // Draw lines between points
+        for (let i = 0; i < points.length; i++) {
+            for (let j = i + 1; j < points.length; j++) {
+                const dx = points[i].x - points[j].x;
+                const dy = points[i].y - points[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < maxDistance) {
+                    ctx.beginPath();
+                    ctx.moveTo(points[i].x, points[i].y);
+                    ctx.lineTo(points[j].x, points[j].y);
+                    ctx.globalAlpha = 1 - dist / maxDistance;
+                    ctx.stroke();
+                }
+            }
+        }
+        
+        // Draw lines from points to mouse
+        for (let i = 0; i < points.length; i++) {
+            const dx = mouseX - points[i].x;
+            const dy = mouseY - points[i].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < 300) {
+                ctx.beginPath();
+                ctx.moveTo(points[i].x, points[i].y);
+                ctx.lineTo(mouseX, mouseY);
+                ctx.globalAlpha = (1 - dist / 300) * 0.3;
+                ctx.stroke();
+            }
+        }
+        
+        // Draw points
+        ctx.fillStyle = '#ff3d00';
+        for (let i = 0; i < points.length; i++) {
+            ctx.beginPath();
+            ctx.arc(points[i].x, points[i].y, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        ctx.globalAlpha = 1;
+    }
+    
+    function updatePoints() {
+        for (let i = 0; i < points.length; i++) {
+            points[i].x += points[i].vx;
+            points[i].y += points[i].vy;
+            
+            // Bounce off edges
+            if (points[i].x < 0 || points[i].x > width) points[i].vx *= -1;
+            if (points[i].y < 0 || points[i].y > height) points[i].vy *= -1;
+            
+            // Move towards mouse slightly
+            const dx = mouseX - points[i].x;
+            const dy = mouseY - points[i].y;
+            points[i].x += dx * 0.001;
+            points[i].y += dy * 0.001;
+        }
+    }
+    
+    function animate() {
+        drawWeb();
+        updatePoints();
+        requestAnimationFrame(animate);
+    }
+    
+    window.addEventListener('resize', resize);
+    resize();
+    animate();
 });
 
