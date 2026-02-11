@@ -11,7 +11,9 @@ Home Page
 
 {% block content %}
 <!-- Hero Background -->
-<div class="hero-bg"></div>
+<section>
+    {% include 'base/includes/loading.html' %}
+</section>
 
 <section id="home-carousel-section" class="home-carousel-section">
     {% include 'mainapp/includes/carousel.html' %}
