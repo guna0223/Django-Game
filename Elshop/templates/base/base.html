@@ -27,7 +27,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 
-<body>   
+<body>
+    {% if 'login' in request.path or request.session.login_success %}
+        {% include 'base/includes/loading.html' %}
+    {% endif %}   
     <!-- header -->
     <header>
         {% include 'base/includes/header.html' %}

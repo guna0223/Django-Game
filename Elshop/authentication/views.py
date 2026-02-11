@@ -27,6 +27,11 @@ class UserRegisterView(CreateView):
 class UserLoginView(LoginView):
     template_name = 'authentication/login.html'
     authentication_form = UserLoginForm
+    
+    def form_valid(self, form):
+        # Set session flag for showing loader after login
+        self.request.session['login_success'] = True
+        return super().form_valid(form)
 
 # Password Reset Flow
 

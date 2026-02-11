@@ -709,6 +709,7 @@ document.addEventListener('DOMContentLoaded', function () {
    - Smooth completion animation
    
    Usage:
+   - Only shows on login page and when network goes offline
    - Include loading.html in the template where you want the loader
    - The loader automatically hides when progress reaches 100%
    - Main content fades in after loader completes
@@ -719,6 +720,18 @@ document.addEventListener('DOMContentLoaded', function () {
    LOADER INITIALIZATION
    ===================================================== */
 
+// Check if loader should run (login page or offline event)
+function shouldShowLoader() {
+    const path = window.location.pathname;
+    // Check if on login page
+    const isLoginPage = path.includes('/login') || path.includes('/accounts/login');
+    // Check if explicitly requested
+    const showLoader = sessionStorage.getItem('showSpiderLoader');
+    // Check if login was successful
+    const loginSuccess = sessionStorage.getItem('loginSuccess');
+    return isLoginPage || showLoader === 'true' || loginSuccess === 'true';
+}
+
 // Wait for DOM to be fully loaded before initializing 
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -728,6 +741,169 @@ document.addEventListener('DOMContentLoaded', function() {
     const progressWeb = document.getElementById('progress-web');
     const percentValue = document.getElementById('percent-value');
     const webParticles = document.getElementById('web-particles');
+    
+    // Only initialize if loader element exists AND conditions are met
+    if (!spiderLoader) return;
+    
+    // Check if we should show loader
+    if (!shouldShowLoader()) {
+        // Hide loader immediately
+        spiderLoader.style.display = 'none';
+        
+        // Show main content immediately
+        const mainContent = document.querySelector('main');
+        if (mainContent) {
+            mainContent.style.opacity = '1';
+        }
+        const navbar = document.querySelector('.tech-navbar');
+        if (navbar) {
+            navbar.style.opacity = '1';
+        }
+        return;
+    }
+    
+    // Clear session flags after showing
+    sessionStorage.removeItem('showSpiderLoader');
+    sessionStorage.removeItem('loginSuccess');
+    
+    /* =====================================================
+       NETWORK OFFLINE DETECTION
+       Show loader when network goes offline
+       ===================================================== */
+    
+    function showOfflineLoader() {
+        // Check if loader already exists
+        let spiderLoader = document.getElementById('spider-loader');
+        
+        // If no loader exists, create it dynamically
+        if (!spiderLoader) {
+            const loadingHTML = `
+            <div id="spider-loader" class="spider-loader">
+                <div class="web-bg-container">
+                    <div class="bg-web bg-web-1"></div>
+                    <div class="bg-web bg-web-2"></div>
+                    <div class="bg-web bg-web-3"></div>
+                    <div class="bg-web bg-web-4"></div>
+                    <div class="bg-web bg-web-5"></div>
+                    <div class="bg-web bg-web-6"></div>
+                </div>
+                <div class="shooter-container">
+                    <div class="wrist-device">
+                        <div class="device-body">
+                            <div class="device-line"></div>
+                            <div class="device-line"></div>
+                            <div class="device-light">
+                                <div class="light-pulse"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="web-shoot-line">
+                        <div class="web-thread"></div>
+                    </div>
+                    <div class="progress-web-container">
+                        <div class="progress-web" id="progress-web">
+                            <div class="web-droplet"></div>
+                        </div>
+                    </div>
+                    <div class="connector-points">
+                        <div class="connector connector-1"></div>
+                        <div class="connector connector-2"></div>
+                        <div class="connector connector-3"></div>
+                    </div>
+                </div>
+                <div class="swing-effect">
+                    <div class="swing-anchor"></div>
+                    <div class="swing-line"></div>
+                </div>
+                <div class="loader-content">
+                    <div class="loader-text-container">
+                        <p class="loader-text">
+                            <span class="text-layer text-layer-1">OFFLINE</span>
+                            <span class="text-layer text-layer-2">RETRYING</span>
+                            <span class="text-layer text-layer-3">CONNECTING</span>
+                        </p>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-track">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="progress-percentage">
+                            <span class="percent-value" id="percent-value">0</span>
+                            <span class="percent-symbol">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="spider-symbol">
+                    <svg viewBox="0 0 100 100" class="spider-icon" id="spider-icon">
+                        <defs>
+                            <linearGradient id="spiderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ff3d00;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#ff9100;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <ellipse cx="50" cy="55" rx="25" ry="30" fill="url(#spiderGradient)"/>
+                        <circle cx="35" cy="40" r="8" fill="white"/>
+                        <circle cx="65" cy="40" r="8" fill="white"/>
+                        <path d="M50 25 L50 85 M20 50 L80 50 M25 30 L75 80 M75 30 L25 80" 
+                              stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="web-particles" id="web-particles"></div>
+            </div>`;
+            
+            document.body.insertAdjacentHTML('afterbegin', loadingHTML);
+            spiderLoader = document.getElementById('spider-loader');
+            
+            // Get fresh element references after creation
+            const newProgressFill = document.getElementById('progress-fill');
+            const newProgressWeb = document.getElementById('progress-web');
+            const newPercentValue = document.getElementById('percent-value');
+            const newWebParticles = document.getElementById('web-particles');
+            
+            // Update references
+            if (newProgressFill) {
+                progressFill = newProgressFill;
+            }
+            if (newProgressWeb) {
+                progressWeb = newProgressWeb;
+            }
+            if (newPercentValue) {
+                percentValue = newPercentValue;
+            }
+            if (newWebParticles) {
+                webParticles = newWebParticles;
+            }
+        }
+        
+        if (spiderLoader) {
+            spiderLoader.style.display = 'flex';
+            spiderLoader.style.opacity = '1';
+            spiderLoader.style.transform = 'scale(1)';
+            
+            // Reset and restart progress
+            progress = 0;
+            
+            // Start progress
+            setTimeout(() => {
+                updateProgress();
+            }, 500);
+        }
+    }
+    
+    // Listen for online/offline events
+    window.addEventListener('offline', function() {
+        showOfflineLoader();
+    });
+    
+    window.addEventListener('online', function() {
+        // Hide loader when network comes back
+        if (spiderLoader) {
+            spiderLoader.classList.add('loading-complete');
+            setTimeout(() => {
+                hideLoader();
+            }, 800);
+        }
+    });
     
     /* =====================================================
        PARTICLE GENERATION
@@ -879,11 +1055,163 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     }
     
-    // Only initialize if loader element exists
-    if (spiderLoader) {
-        initLoader();
-    }
+    // Initialize loader
+    initLoader();
 });
+
+/* =========================================================================
+   UTILITY FUNCTION TO TRIGGER LOADER
+   Call this function to show the loader on specific events
+   Example: triggerSpiderLoader();
+   ========================================================================= */
+function triggerSpiderLoader() {
+    sessionStorage.setItem('showSpiderLoader', 'true');
+    window.location.reload();
+}
+
+/* =====================================================
+   GLOBAL NETWORK STATUS LISTENERS
+   Works on all pages - shows loader when offline
+   ===================================================== */
+
+// Function to inject and show offline loader
+function showOfflineLoaderGlobal() {
+    let spiderLoader = document.getElementById('spider-loader');
+    
+    if (!spiderLoader) {
+        const loadingHTML = `
+        <div id="spider-loader" class="spider-loader">
+            <div class="web-bg-container">
+                <div class="bg-web bg-web-1"></div>
+                <div class="bg-web bg-web-2"></div>
+                <div class="bg-web bg-web-3"></div>
+                <div class="bg-web bg-web-4"></div>
+                <div class="bg-web bg-web-5"></div>
+                <div class="bg-web bg-web-6"></div>
+            </div>
+            <div class="shooter-container">
+                <div class="wrist-device">
+                    <div class="device-body">
+                        <div class="device-line"></div>
+                        <div class="device-line"></div>
+                        <div class="device-light">
+                            <div class="light-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="web-shoot-line">
+                    <div class="web-thread"></div>
+                </div>
+                <div class="progress-web-container">
+                    <div class="progress-web" id="progress-web">
+                        <div class="web-droplet"></div>
+                    </div>
+                </div>
+                <div class="connector-points">
+                    <div class="connector connector-1"></div>
+                    <div class="connector connector-2"></div>
+                    <div class="connector connector-3"></div>
+                </div>
+            </div>
+            <div class="swing-effect">
+                <div class="swing-anchor"></div>
+                <div class="swing-line"></div>
+            </div>
+            <div class="loader-content">
+                <div class="loader-text-container">
+                    <p class="loader-text">
+                        <span class="text-layer text-layer-1">OFFLINE</span>
+                        <span class="text-layer text-layer-2">RETRYING</span>
+                        <span class="text-layer text-layer-3">CONNECTING</span>
+                    </p>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-percentage">
+                        <span class="percent-value" id="percent-value">0</span>
+                        <span class="percent-symbol">%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="spider-symbol">
+                <svg viewBox="0 0 100 100" class="spider-icon" id="spider-icon">
+                    <defs>
+                        <linearGradient id="spiderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff3d00;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#ff9100;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <ellipse cx="50" cy="55" rx="25" ry="30" fill="url(#spiderGradient)"/>
+                    <circle cx="35" cy="40" r="8" fill="white"/>
+                    <circle cx="65" cy="40" r="8" fill="white"/>
+                    <path d="M50 25 L50 85 M20 50 L80 50 M25 30 L75 80 M75 30 L25 80" 
+                          stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="web-particles" id="web-particles"></div>
+        </div>`;
+        
+        document.body.insertAdjacentHTML('afterbegin', loadingHTML);
+        spiderLoader = document.getElementById('spider-loader');
+    }
+    
+    // Hide main content temporarily
+    const mainContent = document.querySelector('main');
+    const navbar = document.querySelector('.tech-navbar');
+    if (mainContent) mainContent.style.opacity = '0.1';
+    if (navbar) navbar.style.opacity = '0.1';
+    
+    spiderLoader.style.display = 'flex';
+    spiderLoader.style.opacity = '1';
+    spiderLoader.style.transform = 'scale(1)';
+    
+    // Start fake progress
+    let offlineProgress = 0;
+    function updateOfflineProgress() {
+        const percentValue = document.getElementById('percent-value');
+        const progressFill = document.getElementById('progress-fill');
+        
+        offlineProgress += Math.random() * 3 + 1;
+        if (offlineProgress > 95) offlineProgress = 95;
+        
+        if (percentValue) percentValue.textContent = Math.floor(offlineProgress);
+        if (progressFill) progressFill.style.width = offlineProgress + '%';
+        
+        if (!navigator.onLine) {
+            setTimeout(updateOfflineProgress, 100);
+        }
+    }
+    updateOfflineProgress();
+}
+
+// Function to hide offline loader
+function hideOfflineLoaderGlobal() {
+    const spiderLoader = document.getElementById('spider-loader');
+    if (spiderLoader) {
+        spiderLoader.style.opacity = '0';
+        spiderLoader.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+            spiderLoader.remove();
+            
+            // Restore main content
+            const mainContent = document.querySelector('main');
+            const navbar = document.querySelector('.tech-navbar');
+            if (mainContent) mainContent.style.opacity = '1';
+            if (navbar) navbar.style.opacity = '1';
+        }, 500);
+    }
+}
+
+// Listen for network status changes
+window.addEventListener('offline', showOfflineLoaderGlobal);
+window.addEventListener('online', hideOfflineLoaderGlobal);
+
+// Initial check - if already offline when page loads
+if (!navigator.onLine) {
+    showOfflineLoaderGlobal();
+}
 
 /* =========================================================================
    END OF SPIDER-LOADER.JS (Merged into script.js)
