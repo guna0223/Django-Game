@@ -47,15 +47,14 @@
         </a>
 
         {% if user.is_staff %}
-
-        <a href="{% url 'add_product' %}" class="btn btn-primary mt-3 add-to-cart">
-            <i class="bi bi-plus-circle"></i> Add Product
+        <a href="{% url 'edit_product' product.pk %}" class="btn btn-primary mt-3 add-to-cart">
+            <i class="bi bi-plus-circle"></i> Edit Product 
         </a>
 
         {% else %}
 
         {% if product.stock > 0 %}
-
+        
         {% if user.is_authenticated %}
         <button class="btn btn-sm btn-primary w-100 add-to-cart">
             Add to Cart
