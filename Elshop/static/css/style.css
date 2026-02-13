@@ -1146,10 +1146,12 @@ textarea.form-control {
     }
 
     .hero-carousel .slide-title {
+        display: none !important;
         font-size: 1.25rem;
     }
 
     .hero-carousel .slide-caption {
+        display: none !important;
         font-size: 0.8rem;
     }
 }
