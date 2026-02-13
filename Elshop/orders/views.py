@@ -142,4 +142,31 @@ def cancel_order(request, order_id):
 
 
 
-# gpt mail send to user ---gpt
+# in voice
+from django.core.mail import EmailMessage
+from django.conf import settings
+from .utils import generate_invoice_pdf
+
+def send_invoice_email(order):
+    pdf_buffer = generate_invoice_pdf(order)
+
+    email = EmailMessage(
+        subject=f"Invoice for Order #{order.id} – PlayZoneX",
+        body=(
+            f"Hi {order.user.username},\n\n"
+            "Thank you for your purchase at PlayZoneX.\n"
+            "Please find your invoice attached.\n\n"
+            "— PlayZoneX Team"
+        ),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[order.user.email],
+    )
+
+    email.attach(
+        f"invoice_order_{order.id}.pdf",
+        pdf_buffer.read(),
+        "application/pdf",
+    )
+
+    email.send()
+
