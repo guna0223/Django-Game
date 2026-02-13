@@ -17,6 +17,9 @@ Order Details - Order #{{ order.id }}
     <div class="detail-card mb-4">
         <div class="detail-card-header">
             <i class="bi bi-receipt"></i>Order Summary
+            <a href="{% url 'download_invoice_pdf' order.id %}" class="btn btn-sm btn-outline-primary ms-auto" target="_blank">
+                <i class="bi bi-file-earmark-pdf"></i> Download Invoice PDF
+            </a>
         </div>
         <div class="detail-card-body">
             <div class="row">

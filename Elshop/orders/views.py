@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now
 from django.contrib import messages
@@ -138,7 +139,18 @@ def cancel_order(request, order_id):
     else:
         messages.error(request, "This order cannot be cancelled.")
 
-    return redirect("home_page") 
+    return redirect("home_page")
+
+
+@login_required
+def download_invoice_pdf(request, order_id):
+    """Generate and download invoice PDF for an order."""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    pdf_buffer = generate_invoice_pdf(order)
+    
+    response = HttpResponse(pdf_buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="invoice_order_{order.id}.pdf"'
+    return response
 
 
 

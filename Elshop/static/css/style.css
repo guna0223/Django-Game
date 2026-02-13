@@ -2170,6 +2170,200 @@ footer::before {
 }
 
 /* Alert Styling */
+.gaming-alert {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 10000;
+    min-width: 350px;
+    max-width: 450px;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-family: var(--font-gaming);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: gamingAlertSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-card);
+}
+
+.gaming-alert::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+.gaming-alert .alert-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.gaming-alert .alert-content {
+    flex: 1;
+}
+
+.gaming-alert .alert-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.gaming-alert .alert-message {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.gaming-alert .alert-dismiss {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-secondary);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.gaming-alert .alert-dismiss:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+}
+
+/* Success Alert */
+.gaming-alert.success {
+    background: linear-gradient(135deg, rgba(0, 230, 118, 0.15) 0%, rgba(0, 200, 83, 0.1) 100%);
+    border: 1px solid rgba(0, 230, 118, 0.3);
+}
+
+.gaming-alert.success::before {
+    background: var(--accent-green);
+    box-shadow: 0 0 15px rgba(0, 230, 118, 0.5);
+}
+
+.gaming-alert.success .alert-icon {
+    color: var(--accent-green);
+}
+
+/* Error Alert */
+.gaming-alert.error {
+    background: linear-gradient(135deg, rgba(255, 64, 129, 0.15) 0%, rgba(255, 82, 82, 0.1) 100%);
+    border: 1px solid rgba(255, 64, 129, 0.3);
+}
+
+.gaming-alert.error::before {
+    background: var(--accent-pink);
+    box-shadow: 0 0 15px rgba(255, 64, 129, 0.5);
+}
+
+.gaming-alert.error .alert-icon {
+    color: var(--accent-pink);
+}
+
+/* Warning Alert */
+.gaming-alert.warning {
+    background: linear-gradient(135deg, rgba(255, 234, 0, 0.15) 0%, rgba(255, 200, 0, 0.1) 100%);
+    border: 1px solid rgba(255, 234, 0, 0.3);
+}
+
+.gaming-alert.warning::before {
+    background: var(--accent-yellow);
+    box-shadow: 0 0 15px rgba(255, 234, 0, 0.5);
+}
+
+.gaming-alert.warning .alert-icon {
+    color: var(--accent-yellow);
+}
+
+/* Info Alert */
+.gaming-alert.info {
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.15) 0%, rgba(0, 200, 255, 0.1) 100%);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+.gaming-alert.info::before {
+    background: var(--secondary-color);
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+}
+
+.gaming-alert.info .alert-icon {
+    color: var(--secondary-color);
+}
+
+/* Animations */
+@keyframes gamingAlertSlideIn {
+    from {
+        transform: translateX(120%) rotate(5deg);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0) rotate(0);
+        opacity: 1;
+    }
+}
+
+@keyframes gamingAlertSlideOut {
+    from {
+        transform: translateX(0) rotate(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(120%) rotate(5deg);
+        opacity: 0;
+    }
+}
+
+@keyframes gamingAlertFadeOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+}
+
+/* Progress bar for auto-dismiss */
+.gaming-alert .alert-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    overflow: hidden;
+}
+
+.gaming-alert .alert-progress-bar {
+    height: 100%;
+    background: currentColor;
+    opacity: 0.7;
+    animation: progressShrink linear forwards;
+}
+
+@keyframes progressShrink {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* Legacy Alert Styling (for backward compatibility) */
 .alert {
     background: var(--bg-input);
     border: 1px solid rgba(255, 61, 0, 0.2);

@@ -582,3 +582,55 @@ function initProductCarouselScroll() {
         }
     }
 }
+
+/* =====================================================
+    GAMING ALERTS - Notifications
+    ===================================================== */
+
+function initGamingAlerts() {
+    const alerts = document.querySelectorAll('.gaming-alert');
+    
+    alerts.forEach(alert => {
+        const dismissTime = alert.dataset.autoDismiss || 5000;
+        
+        // Start auto-dismiss timer with progress bar
+        if (dismissTime > 0) {
+            const progressBar = alert.querySelector('.alert-progress-bar');
+            if (progressBar) {
+                progressBar.style.animationDuration = dismissTime + 'ms';
+            }
+            
+            setTimeout(() => {
+                dismissGamingAlert(alert.querySelector('.alert-dismiss'));
+            }, dismissTime);
+        }
+    });
+}
+
+function dismissGamingAlert(button) {
+    const alert = button.closest('.gaming-alert');
+    if (!alert) return;
+    
+    // Add exit animation
+    alert.style.animation = 'gamingAlertFadeOut 0.3s ease forwards';
+    
+    // Remove from DOM after animation
+    setTimeout(() => {
+        alert.style.animation = 'gamingAlertSlideOut 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards';
+        
+        setTimeout(() => {
+            alert.remove();
+            
+            // Check if no more alerts
+            const container = document.querySelector('.gaming-alerts-container');
+            if (container && container.children.length === 0) {
+                container.remove();
+            }
+        }, 400);
+    }, 300);
+}
+
+// Initialize gaming alerts on DOM ready
+document.addEventListener('DOMContentLoaded', function () {
+    initGamingAlerts();
+});

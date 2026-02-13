@@ -13,11 +13,35 @@
         </div>
 
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert  text-center add-cart">
-                    {{ message }}
-                </div>
-            {% endfor %}
+            <div class="gaming-alerts-container">
+                {% for message in messages %}
+                    <div class="gaming-alert {{ message.tags|default:'success' }}" data-auto-dismiss="5000">
+                        <span class="alert-icon">
+                            {% if 'success' in message.tags %}
+                                <i class="bi bi-check-circle-fill"></i>
+                            {% elif 'error' in message.tags or 'danger' in message.tags %}
+                                <i class="bi bi-x-circle-fill"></i>
+                            {% elif 'warning' in message.tags %}
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                            {% else %}
+                                <i class="bi bi-info-circle-fill"></i>
+                            {% endif %}
+                        </span>
+                        <div class="alert-content">
+                            <div class="alert-title">
+                                {% if 'success' in message.tags %}Success!{% elif 'error' in message.tags or 'danger' in message.tags %}Error!{% elif 'warning' in message.tags %}Warning!{% else %}Info!{% endif %}
+                            </div>
+                            <div class="alert-message">{{ message }}</div>
+                        </div>
+                        <button class="alert-dismiss" onclick="dismissGamingAlert(this)">
+                            <i class="bi bi-x"></i>
+                        </button>
+                        <div class="alert-progress">
+                            <div class="alert-progress-bar"></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
 
         <div class="row gy-4 align-items-center">
