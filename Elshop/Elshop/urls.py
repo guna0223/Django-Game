@@ -32,7 +32,7 @@ urlpatterns = [
     path('cart/', include('cart.urls')),
 
     path('', include('orders.urls')),
-    path('',include('payments.urls')),
+    path('payment/',include('payments.urls')),
 ]
 
 if settings.DEBUG:

@@ -3597,3 +3597,62 @@ footer::before {
 
 
 /* dup */
+
+/* ========================================
+   RAZORPAY PAYMENT BUTTON STYLES
+   ======================================== */
+.razorpay-payment-button,
+.razorpay-payment-button.paynow {
+    background: var(--gradient-primary) !important;
+    border: none !important;
+    border-radius: var(--radius) !important;
+    padding: 0.875rem 2rem !important;
+    font-family: var(--font-gaming) !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+    font-size: 0.9rem !important;
+    color: var(--text-primary) !important;
+    transition: all var(--transition) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+    text-decoration: none !important;
+    line-height: normal !important;
+    height: auto !important;
+}
+
+.razorpay-payment-button::before,
+.razorpay-payment-button.paynow::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
+    transition: all var(--transition-slow) !important;
+}
+
+.razorpay-payment-button:hover::before,
+.razorpay-payment-button.paynow:hover::before {
+    left: 100% !important;
+}
+
+.razorpay-payment-button:hover,
+.razorpay-payment-button.paynow:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: var(--shadow-glow-orange) !important;
+    color: var(--text-primary) !important;
+}
+
+.razorpay-payment-button:active,
+.razorpay-payment-button.paynow:active {
+    transform: translateY(-1px) !important;
+}
+
+/* Razorpay iframe container */
+.razorpay-container {
+    display: inline-block;
+}

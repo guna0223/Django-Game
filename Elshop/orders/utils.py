@@ -1,10 +1,17 @@
 from io import BytesIO
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
-from reportlab.lib import colors
-
 
 def generate_invoice_pdf(order):
+    try:
+        from reportlab.lib.pagesizes import A4
+        from reportlab.pdfgen import canvas
+        from reportlab.lib import colors
+        from reportlab.lib.units import mm
+    except ImportError as e:
+        raise RuntimeError(
+            "ReportLab is required to generate invoices. "
+            "Install it using Python 3.11."
+        ) from e
+
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=A4)
 
@@ -49,7 +56,6 @@ def generate_invoice_pdf(order):
     right_y = height - 120
     order_details_x = width - 230
 
-    # Bill To
     p.setFont("Helvetica-Bold", 11)
     p.setFillColor(text_dark)
     p.drawString(50, left_y, "Bill To:")
@@ -64,12 +70,10 @@ def generate_invoice_pdf(order):
             f"{order.address.city}, {order.address.state}",
             order.address.pincode,
         ]
-
         for line in address_lines:
             left_y -= 14
             p.drawString(50, left_y, line)
 
-    # Order Details (Right)
     p.setFont("Helvetica-Bold", 11)
     p.setFillColor(text_dark)
     p.drawString(order_details_x, right_y, "Order Details:")
@@ -113,11 +117,11 @@ def generate_invoice_pdf(order):
         p.setFillColor(colors.HexColor("#f8f9fa") if i % 2 == 0 else colors.white)
         p.rect(40, y - 5, width - 80, 20, fill=1, stroke=0)
 
-        p.setFillColor(text_dark)
         title = item.order_item.title
         if len(title) > 50:
             title = title[:47] + "..."
 
+        p.setFillColor(text_dark)
         p.drawString(50, y, title)
         p.drawRightString(width - 200, y, str(item.quantity))
         p.drawRightString(width - 120, y, f"₹{item.price:,.2f}")
@@ -125,65 +129,11 @@ def generate_invoice_pdf(order):
 
         y -= 25
 
-    p.setStrokeColor(border_color)
-    p.line(40, y, width - 40, y)
-
-    # =========================
-    # TOTALS
-    # =========================
-    y -= 30
-    label_x = width - 160
-    value_x = width - 50
-
-    p.setFont("Helvetica", 10)
-    p.setFillColor(text_muted)
-    p.drawRightString(label_x, y, "Subtotal:")
-    p.drawRightString(label_x, y - 18, "Tax:")
-    p.drawRightString(label_x, y - 36, "Shipping:")
-
-    p.setFillColor(text_dark)
-    p.drawRightString(value_x, y, f"₹{order.total_amount:,.2f}")
-    p.drawRightString(value_x, y - 18, "₹0.00")
-    p.drawRightString(value_x, y - 36, "₹0.00")
-
-    y -= 55
-    p.setStrokeColor(accent_color)
-    p.setLineWidth(2)
-    p.line(label_x, y, value_x, y)
-
-    y -= 20
-    p.setFont("Helvetica-Bold", 14)
-    p.setFillColor(primary_color)
-    p.drawString(label_x, y, "TOTAL:")
-
-    p.setFillColor(accent_color)
-    p.drawRightString(value_x, y, f"₹{order.total_amount:,.2f}")
-
-    # =========================
-    # FOOTER
-    # =========================
-    y -= 60
-    p.setFont("Helvetica-Bold", 12)
-    p.setFillColor(primary_color)
-    p.drawCentredString(width / 2, y, "Thank you for your purchase!")
-
-    y -= 16
-    p.setFont("Helvetica", 9)
-    p.setFillColor(text_muted)
-    p.drawCentredString(width / 2, y, "For any inquiries, contact support@playzonex.com")
-
-    y -= 14
-    p.drawCentredString(
-        width / 2,
-        y,
-        "This invoice is computer-generated and does not require a signature.",
-    )
-
     # =========================
     # SAVE
     # =========================
     p.showPage()
     p.save()
-
     buffer.seek(0)
+
     return buffer

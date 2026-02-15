@@ -500,6 +500,67 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 /* =====================================================
+    RAZORPAY BUTTON STYLING
+    ===================================================== */
+
+function styleRazorpayButton() {
+    // Target Razorpay buttons
+    const razorpayButtons = document.querySelectorAll('.razorpay-payment-button');
+    
+    razorpayButtons.forEach(button => {
+        // Only apply if not already styled
+        if (!button.classList.contains('razorpay-styled')) {
+            button.classList.add('razorpay-styled');
+            
+            // Apply inline styles to override Razorpay defaults
+            button.style.background = 'linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)';
+            button.style.border = 'none';
+            button.style.borderRadius = '8px';
+            button.style.padding = '14px 32px';
+            button.style.fontFamily = "'Rajdhani', sans-serif";
+            button.style.fontWeight = '700';
+            button.style.textTransform = 'uppercase';
+            button.style.letterSpacing = '2px';
+            button.style.fontSize = '14px';
+            button.style.color = '#ffffff';
+            button.style.cursor = 'pointer';
+            button.style.display = 'inline-block';
+            button.style.textDecoration = 'none';
+            button.style.lineHeight = '1';
+            button.style.height = 'auto';
+            button.style.minWidth = '180px';
+            button.style.transition = 'all 0.3s ease';
+            button.style.boxShadow = '0 4px 15px rgba(255, 107, 53, 0.4)';
+            
+            // Add hover effect
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+                this.style.boxShadow = '0 8px 25px rgba(255, 107, 53, 0.6)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 15px rgba(255, 107, 53, 0.4)';
+            });
+        }
+    });
+}
+
+// Run on page load
+styleRazorpayButton();
+
+// Use MutationObserver to handle dynamically added Razorpay buttons
+const razorpayObserver = new MutationObserver(function(mutations) {
+    styleRazorpayButton();
+});
+
+// Start observing the document body for added nodes
+razorpayObserver.observe(document.body, {
+    childList: true,
+    subtree: true
+});
+
+/* =====================================================
     INTERSECTION OBSERVER FOR ANIMATIONS
     ===================================================== */
 

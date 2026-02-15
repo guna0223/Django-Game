@@ -39,8 +39,7 @@ Order Confirmation
                     <!-- Payment Section -->
                     <div class="payment-section">
                         <h4 class="section-subtitle">Payment</h4>
-                        <form id="payment-form" method="post" action="{% url 'payment:payment_success' %}">
-                            {% csrf_token %}
+                        <form id="payment-form" method="post" action="{% url 'payment:payment_success' %}">                            {% csrf_token %}
                             <script src="https://checkout.razorpay.com/v1/checkout.js"
                                     data-key="{{ key_id }}"
                                     data-amount="{{ razorpay_order.amount }}"
