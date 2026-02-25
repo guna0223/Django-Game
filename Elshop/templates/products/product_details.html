@@ -33,13 +33,19 @@
                     <span class="discount">
                         ({{ product.discount }}% OFF)
                     </span>
+
+                    {% if user.is_authenticated %}
                     {% if not user.is_staff %}
                     <button class="btn btn-primary detail-add-to-cart" type="button">
                         <i class="bi bi-cart"></i> Add to Cart
                     </button>
                     {% endif %}
+                    {% else %}
+                    <a class="btn btn-primary w-100" href="{% url 'signin' %}">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> Login 
+                    </a>
+                    {% endif %}
                 </div>
-
                 <div class="action-buttons mt-4">
                     {% if not user.is_staff %}
                     <!-- <div class="luxury-features mt-3 d-flex" style="display: flex !important;">
