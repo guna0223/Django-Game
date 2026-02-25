@@ -58,6 +58,8 @@ function updateProductUI(productId) {
         const addToCartBtn = card.querySelector('.add-to-cart');
         const stockWarning = card.querySelector('.stock-warning');
         
+        const availableStock = stock - cartQty;
+        
         if (addToCartBtn) {
             if (cartQty >= stock && stock > 0) {
                 addToCartBtn.classList.add('out-of-stock');
@@ -80,14 +82,14 @@ function updateProductUI(productId) {
             }
         }
         
-        // Update stock warning
-        const remainingStock = stock - cartQty;
+        // Update stock warning - hide when out of stock
         if (stockWarning) {
-            if (remainingStock <= 5 && remainingStock > 0) {
-                stockWarning.textContent = `⚠ Only ${remainingStock} left in stock`;
-                stockWarning.style.display = 'block';
-            } else if (remainingStock <= 0) {
+            if (availableStock <= 0) {
+                // Hide stock warning completely when out of stock
                 stockWarning.style.display = 'none';
+            } else if (availableStock <= 5) {
+                stockWarning.textContent = `⚠ Only ${availableStock} left in stock`;
+                stockWarning.style.display = 'block';
             } else {
                 stockWarning.style.display = 'none';
             }
@@ -145,9 +147,45 @@ function updateProductUI(productId) {
 // Initialize stock UI for all products on page
 function initStockUI() {
     const cart = getCartFromStorage();
-    for (const productId in cart) {
-        updateProductUI(productId);
-    }
+    
+    // Update all ProductCards on the page
+    document.querySelectorAll('.product-card[data-product-id]').forEach(card => {
+        const productId = parseInt(card.dataset.productId);
+        const stock = parseInt(card.dataset.stock || 0);
+        const cartQty = cart[productId] || 0;
+        const availableStock = stock - cartQty;
+        const addToCartBtn = card.querySelector('.add-to-cart');
+        const stockWarning = card.querySelector('.stock-warning');
+        
+        // Set initial button state
+        if (addToCartBtn) {
+            if (stock === 0) {
+                addToCartBtn.classList.add('out-of-stock');
+                addToCartBtn.classList.remove('btn-primary');
+                addToCartBtn.classList.add('btn-secondary');
+                addToCartBtn.disabled = true;
+                addToCartBtn.innerHTML = '<i class="bi bi-cart-x"></i> Out of Stock';
+            } else if (cartQty >= stock) {
+                addToCartBtn.classList.add('out-of-stock');
+                addToCartBtn.classList.remove('btn-primary');
+                addToCartBtn.classList.add('btn-secondary');
+                addToCartBtn.disabled = true;
+                addToCartBtn.innerHTML = '<i class="bi bi-cart-x"></i> Out of Stock';
+            }
+        }
+        
+        // Set initial stock warning state - hide when out of stock
+        if (stockWarning) {
+            if (availableStock <= 0) {
+                stockWarning.style.display = 'none';
+            } else if (availableStock <= 5) {
+                stockWarning.textContent = `⚠ Only ${availableStock} left in stock`;
+                stockWarning.style.display = 'block';
+            } else {
+                stockWarning.style.display = 'none';
+            }
+        }
+    });
     
     // Initialize Product Details page specifically
     initProductDetailsStock();
