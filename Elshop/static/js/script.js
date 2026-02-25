@@ -2,12 +2,208 @@
     GAMING JAVASCRIPT - Enhanced Interactions
     ===================================================== */
 
+// Cart storage key
+const CART_STORAGE_KEY = 'game_shop_cart';
+
+// Get cart from localStorage
+function getCartFromStorage() {
+    try {
+        const cart = localStorage.getItem(CART_STORAGE_KEY);
+        return cart ? JSON.parse(cart) : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+// Save cart to localStorage
+function saveCartToStorage(cart) {
+    try {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    } catch (e) {
+        console.error('Error saving cart to localStorage:', e);
+    }
+}
+
+// Get quantity of a product in cart
+function getCartQuantity(productId) {
+    const cart = getCartFromStorage();
+    return cart[productId] || 0;
+}
+
+// Set quantity of a product in cart
+function setCartQuantity(productId, quantity) {
+    const cart = getCartFromStorage();
+    if (quantity > 0) {
+        cart[productId] = quantity;
+    } else {
+        delete cart[productId];
+    }
+    saveCartToStorage(cart);
+}
+
+// Remove product from cart in localStorage
+function removeFromCartStorage(productId) {
+    const cart = getCartFromStorage();
+    delete cart[productId];
+    saveCartToStorage(cart);
+}
+
+// Update all UI elements with cart quantity for a product
+function updateProductUI(productId) {
+    const cartQty = getCartQuantity(productId);
+    
+    // Update ProductCards on the page
+    document.querySelectorAll(`.product-card[data-product-id="${productId}"]`).forEach(card => {
+        const stock = parseInt(card.dataset.stock || 0);
+        const addToCartBtn = card.querySelector('.add-to-cart');
+        const stockWarning = card.querySelector('.stock-warning');
+        
+        if (addToCartBtn) {
+            if (cartQty >= stock && stock > 0) {
+                addToCartBtn.classList.add('out-of-stock');
+                addToCartBtn.classList.remove('btn-primary');
+                addToCartBtn.classList.add('btn-secondary');
+                addToCartBtn.disabled = true;
+                addToCartBtn.innerHTML = '<i class="bi bi-cart-x"></i> Out of Stock';
+            } else if (stock === 0) {
+                addToCartBtn.classList.add('out-of-stock');
+                addToCartBtn.classList.remove('btn-primary');
+                addToCartBtn.classList.add('btn-secondary');
+                addToCartBtn.disabled = true;
+                addToCartBtn.innerHTML = '<i class="bi bi-cart-x"></i> Out of Stock';
+            } else {
+                addToCartBtn.classList.remove('out-of-stock');
+                addToCartBtn.classList.add('btn-primary');
+                addToCartBtn.classList.remove('btn-secondary');
+                addToCartBtn.disabled = false;
+                addToCartBtn.innerHTML = 'Add to Cart';
+            }
+        }
+        
+        // Update stock warning
+        const remainingStock = stock - cartQty;
+        if (stockWarning) {
+            if (remainingStock <= 5 && remainingStock > 0) {
+                stockWarning.textContent = `⚠ Only ${remainingStock} left in stock`;
+                stockWarning.style.display = 'block';
+            } else if (remainingStock <= 0) {
+                stockWarning.style.display = 'none';
+            } else {
+                stockWarning.style.display = 'none';
+            }
+        }
+    });
+    
+    // Update Product Details page
+    const detailSection = document.getElementById('product-details-section');
+    if (detailSection && parseInt(detailSection.dataset.productId) === productId) {
+        const stock = parseInt(detailSection.dataset.stock || 0);
+        const addToCartBtn = detailSection.querySelector('.detail-add-to-cart');
+        const stockInfo = detailSection.querySelector('.stock-info');
+        
+        const availableStock = stock - cartQty;
+        
+        if (addToCartBtn) {
+            if (cartQty >= stock && stock > 0) {
+                addToCartBtn.classList.add('out-of-stock');
+                addToCartBtn.classList.remove('btn-primary');
+                addToCartBtn.classList.add('btn-secondary');
+                addToCartBtn.disabled = true;
+                addToCartBtn.innerHTML = '<i class="bi bi-cart-x"></i> Out of Stock';
+            } else if (stock === 0) {
+                addToCartBtn.classList.add('out-of-stock');
+                addToCartBtn.classList.remove('btn-primary');
+                addToCartBtn.classList.add('btn-secondary');
+                addToCartBtn.disabled = true;
+                addToCartBtn.innerHTML = '<i class="bi bi-cart-x"></i> Out of Stock';
+            } else {
+                addToCartBtn.classList.remove('out-of-stock');
+                addToCartBtn.classList.add('btn-primary');
+                addToCartBtn.classList.remove('btn-secondary');
+                addToCartBtn.disabled = false;
+                addToCartBtn.innerHTML = '<i class="bi bi-cart"></i> Add to Cart';
+            }
+        }
+        
+        // Update stock info display
+        if (stockInfo) {
+            // Only show stock message when availableStock > 0
+            if (availableStock > 0 && availableStock <= 5) {
+                stockInfo.innerHTML = `<small class="text-warning">⚠ Only ${availableStock} more left</small>`;
+                stockInfo.style.display = 'block';
+            } else if (availableStock > 0) {
+                stockInfo.innerHTML = `<small class="text-muted">Stock: ${stock}</small>`;
+                stockInfo.style.display = 'block';
+            } else {
+                // availableStock <= 0 - hide the stock message completely
+                stockInfo.style.display = 'none';
+            }
+        }
+    }
+}
+
+// Initialize stock UI for all products on page
+function initStockUI() {
+    const cart = getCartFromStorage();
+    for (const productId in cart) {
+        updateProductUI(productId);
+    }
+    
+    // Initialize Product Details page specifically
+    initProductDetailsStock();
+}
+
+// Initialize Product Details page stock display on page load
+function initProductDetailsStock() {
+    const detailSection = document.getElementById('product-details-section');
+    if (!detailSection) return;
+    
+    const productId = parseInt(detailSection.dataset.productId);
+    const stock = parseInt(detailSection.dataset.stock || 0);
+    const cartQty = getCartQuantity(productId);
+    const availableStock = stock - cartQty;
+    const addToCartBtn = detailSection.querySelector('.detail-add-to-cart');
+    const stockInfo = detailSection.querySelector('.stock-info');
+    
+    // Set initial button state
+    if (addToCartBtn) {
+        if (stock === 0) {
+            addToCartBtn.classList.add('out-of-stock');
+            addToCartBtn.classList.remove('btn-primary');
+            addToCartBtn.classList.add('btn-secondary');
+            addToCartBtn.disabled = true;
+            addToCartBtn.innerHTML = '<i class="bi bi-cart-x"></i> Out of Stock';
+        } else if (cartQty >= stock) {
+            addToCartBtn.classList.add('out-of-stock');
+            addToCartBtn.classList.remove('btn-primary');
+            addToCartBtn.classList.add('btn-secondary');
+            addToCartBtn.disabled = true;
+            addToCartBtn.innerHTML = '<i class="bi bi-cart-x"></i> Out of Stock';
+        }
+    }
+    
+    // Set initial stock message
+    if (stockInfo) {
+        if (availableStock <= 0) {
+            // Hide stock message completely when out of stock
+            stockInfo.style.display = 'none';
+        } else if (availableStock <= 5) {
+            stockInfo.innerHTML = `<small class="text-warning">⚠ Only ${availableStock} more left</small>`;
+            stockInfo.style.display = 'block';
+        } else {
+            stockInfo.innerHTML = `<small class="text-muted">Stock: ${stock}</small>`;
+            stockInfo.style.display = 'block';
+        }
+    }
+}
+
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function () {
     initNavbarScroll();
     initProductCards();
     initCartAnimations();
     initSearchEffects();
+    initStockUI();
 });
 
 /* =====================================================
@@ -97,6 +293,10 @@ function initCartAnimations() {
                     animateUpdate(qtyEl);
                     updateOrderSummary(data.total_qty, data.total_price);
                     updateCartBadge(data.cart_count);
+                    
+                    // Update localStorage and UI
+                    setCartQuantity(productId, data.quantity);
+                    updateProductUI(productId);
                 })
                 .finally(() => {
                     btn.classList.remove('loading');
@@ -122,12 +322,18 @@ function initCartAnimations() {
                 .then(data => {
                     if (data.deleted) {
                         animateRemove(cartItem);
+                        // Update localStorage and UI
+                        removeFromCartStorage(productId);
+                        updateProductUI(productId);
                     } else {
                         const qtyEl = cartItem.querySelector(".qty");
                         const subtotalEl = cartItem.querySelector(".subtotal");
                         qtyEl.innerText = data.quantity;
                         subtotalEl.innerText = "₹" + parseFloat(data.subtotal).toFixed(2);
                         animateUpdate(qtyEl);
+                        // Update localStorage and UI
+                        setCartQuantity(productId, data.quantity);
+                        updateProductUI(productId);
                     }
                     updateOrderSummary(data.total_qty, data.total_price);
                     updateCartBadge(data.cart_count);
@@ -156,6 +362,10 @@ function initCartAnimations() {
                     animateRemove(cartItem);
                     updateOrderSummary(data.total_qty, data.total_price);
                     updateCartBadge(data.cart_count);
+                    
+                    // Update localStorage and UI
+                    removeFromCartStorage(productId);
+                    updateProductUI(productId);
                 })
                 .finally(() => {
                     btn.classList.remove('loading');
@@ -198,6 +408,19 @@ if (products_container) {
         const btn = event.target;
         const product_card = btn.closest(".product-card");
         const productId = product_card.dataset.productId;
+        const stock = parseInt(product_card.dataset.stock || 0);
+        
+        // Check stock before adding
+        const currentCartQty = getCartQuantity(productId);
+        if (currentCartQty >= stock) {
+            // Already at max stock, disable button
+            btn.classList.add('out-of-stock');
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-secondary');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-cart-x"></i> Out of Stock';
+            return;
+        }
 
         // Gaming button animation
         const originalText = btn.innerText;
@@ -227,6 +450,11 @@ if (products_container) {
                     cartBadge.innerText = data.cart_count;
                     animateUpdate(cartBadge);
                 }
+                
+                // Update localStorage and UI
+                const newQty = currentCartQty + 1;
+                setCartQuantity(productId, newQty);
+                updateProductUI(productId);
             }
 
             // Success feedback
@@ -244,6 +472,8 @@ if (products_container) {
             btn.disabled = false;
             btn.innerText = originalText;
             btn.style.background = '';
+            // Re-check stock after timeout
+            updateProductUI(productId);
         }, 1500);
     });
 }
@@ -256,12 +486,26 @@ const detailSection = document.getElementById('product-details-section');
 
 if (detailSection) {
     const addUrl = detailSection.dataset.addUrl;
-    const productId = detailSection.dataset.productId;
+    const productId = parseInt(detailSection.dataset.productId);
+    const stock = parseInt(detailSection.dataset.stock || 0);
 
     detailSection.addEventListener('click', async function (event) {
         if (!event.target.closest('.detail-add-to-cart')) return;
 
         const btn = event.target.closest('.detail-add-to-cart');
+        
+        // Check stock before adding
+        const currentCartQty = getCartQuantity(productId);
+        if (currentCartQty >= stock) {
+            // Already at max stock, disable button
+            btn.classList.add('out-of-stock');
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-secondary');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-cart-x"></i> Out of Stock';
+            return;
+        }
+
         const csrftoken = getCookie('csrftoken');
         const originalHTML = btn.innerHTML;
 
@@ -286,6 +530,11 @@ if (detailSection) {
 
             if (data.cart_count !== undefined) {
                 updateCartBadge(data.cart_count);
+                
+                // Update localStorage and UI
+                const newQty = currentCartQty + 1;
+                setCartQuantity(productId, newQty);
+                updateProductUI(productId);
             }
 
             btn.innerHTML = '<i class="bi bi-check-lg"></i> Added!';
@@ -300,6 +549,8 @@ if (detailSection) {
             btn.disabled = false;
             btn.innerHTML = originalHTML;
             btn.style.background = '';
+            // Re-check stock after timeout
+            updateProductUI(productId);
         }, 1500);
     });
 }

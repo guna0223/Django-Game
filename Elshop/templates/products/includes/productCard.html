@@ -1,5 +1,5 @@
 <!-- products/includes/productCard.html -->
-<div class="card product-card h-100 fade-in-up scroll-card" data-stock="{% if product.stock > 0 %}in{% else %}out{% endif %}"
+<div class="card product-card h-100 fade-in-up scroll-card" data-stock="{% if product.stock > 0 %}{{ product.stock }}{% else %}0{% endif %}"
     data-product-id="{{ product.id }}">
 
     <div class="card-img-top-wrapper tilt-container">
@@ -65,7 +65,8 @@
         </a>
         {% endif %}
 
-        {% if product.stock <= 5 %} <small class="text-warning d-block mt-2">
+        {% if product.stock <= 5 %} 
+            <small class="text-warning d-block mt-2 stock-warning">
             ⚠ Only {{ product.stock }} left in stock
             </small>
             {% endif %}

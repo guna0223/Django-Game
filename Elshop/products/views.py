@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from .models import Product
-from cart.models import CartItem
 
 # Create your views here.
 
@@ -69,16 +68,6 @@ class ProductDetail(DetailView):
         context['products'] = Product.objects.exclude(
             id=self.object.id
         )[:8]  # limit to 8 products
-
-        # Get cart quantity for the current product if user is authenticated
-        if self.request.user.is_authenticated:
-            cart_item = CartItem.objects.filter(
-                user=self.request.user,
-                product=self.object
-            ).first()
-            context['cart_quantity'] = cart_item.quantity if cart_item else 0
-        else:
-            context['cart_quantity'] = 0
 
         return context
 
