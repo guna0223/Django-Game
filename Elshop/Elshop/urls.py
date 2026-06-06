@@ -20,6 +20,9 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+# for request 
+from django.urls import path
+from mainapp.views import ping
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,6 +36,8 @@ urlpatterns = [
 
     path('', include('orders.urls')),
     path('payment/',include('payments.urls')),
+    # for request 
+    path('ping/', ping),
 ]
 
 if settings.DEBUG:

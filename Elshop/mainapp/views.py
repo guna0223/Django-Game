@@ -1,11 +1,14 @@
 from django.shortcuts import render
 
-
-
 from .models import CarouselImage
 from products.models import Product
 
+from django.http import JsonResponse
+
 # Create your views here.
+
+def health_check(request):
+    return JsonResponse({"status": "ok"})
 
 def homeView(request):
     template = 'mainapp/home.html'
@@ -67,3 +70,6 @@ def contactView(request):
     return render(request, "mainapp/contact.html", {
         "current_page": "contact"
     })
+    # for request
+def ping(request):
+    return JsonResponse({"status": "alive"})
