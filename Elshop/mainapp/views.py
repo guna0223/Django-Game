@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render
 
 from .models import CarouselImage
@@ -5,21 +6,30 @@ from products.models import Product
 
 from django.http import JsonResponse
 
+logger = logging.getLogger(__name__)
+
 # Create your views here.
 
 def health_check(request):
     return JsonResponse({"status": "ok"})
 
+def test_home(request):
+    return JsonResponse({"status": "homepage works"})
+
 def homeView(request):
-    template = 'mainapp/home.html'
-    context = {
-        'current_page' : 'home',
-        'carousel_images': CarouselImage.objects.all(),
+    try:
+        template = 'mainapp/home.html'
+        context = {
+            'current_page' : 'home',
+            'carousel_images': CarouselImage.objects.all(),
+            
+            'products' : Product.objects.all()
+        }
         
-        'products' : Product.objects.all()
-    }
-    
-    return render(request, template_name=template, context=context)
+        return render(request, template_name=template, context=context)
+    except Exception as e:
+        logger.error(f"homeView ERROR: {type(e).__name__}: {e}", exc_info=True)
+        raise
 
 def aboutView(request):
     template = 'mainapp/about.html'
