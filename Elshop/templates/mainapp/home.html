@@ -11,6 +11,12 @@ Home Page
 
 {% block content %}
 
+{% if db_error %}
+<div class="alert alert-warning m-3" role="alert">
+    {{ db_error }}
+</div>
+{% endif %}
+
 <section id="home-carousel-section" class="home-carousel-section">
     {% include 'mainapp/includes/carousel.html' %}
 </section>

@@ -1,5 +1,6 @@
 import logging
 from django.shortcuts import render
+from django.db import OperationalError
 
 from .models import CarouselImage
 from products.models import Product
@@ -20,13 +21,20 @@ def homeView(request):
     try:
         template = 'mainapp/home.html'
         context = {
-            'current_page' : 'home',
+            'current_page': 'home',
             'carousel_images': CarouselImage.objects.all(),
-            
-            'products' : Product.objects.all()
+            'products': Product.objects.all()
         }
-        
         return render(request, template_name=template, context=context)
+    except OperationalError as e:
+        logger.error(f"homeView DB ERROR: {type(e).__name__}: {e}", exc_info=True)
+        context = {
+            'current_page': 'home',
+            'carousel_images': [],
+            'products': [],
+            'db_error': 'Database is not ready. Please run migrations.'
+        }
+        return render(request, template_name='mainapp/home.html', context=context)
     except Exception as e:
         logger.error(f"homeView ERROR: {type(e).__name__}: {e}", exc_info=True)
         raise
