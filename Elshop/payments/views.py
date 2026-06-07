@@ -1,6 +1,7 @@
 import logging
 import razorpay
 from django.conf import settings
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -8,6 +9,21 @@ from .models import Payment, PaymentAttempt
 from orders.models import Order, Address
 
 logger = logging.getLogger(__name__)
+
+def send_order_confirmation_email(order):
+    send_mail(
+        subject=f"Order Confirmed – #{order.id} | PlayZoneX 🎮",
+        message=(
+            f"Hi {order.user.username},\n\n"
+            f"Your order #{order.id} has been confirmed!\n"
+            f"Total: ₹{order.total_amount}\n\n"
+            f"Thank you for shopping at PlayZoneX!\n\n"
+            f"— PlayZoneX Team"
+        ),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[order.user.email],
+        fail_silently=False,
+    )
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 
 
@@ -51,12 +67,9 @@ def payment_success(request):
     razorpay_payment_id = request.POST.get("razorpay_payment_id")
     razorpay_signature  = request.POST.get("razorpay_signature")
 
-    logger.warning(f"payment_success called | order_id={razorpay_order_id} payment_id={razorpay_payment_id}")
-
     if not all([razorpay_order_id, razorpay_payment_id, razorpay_signature]):
-        logger.error("Missing payment fields in POST data")
         return render(request, "payments/failure.html", {
-            "error": "Incomplete payment response. Please contact support."
+            "error": "Incomplete payment response."
         })
 
     try:
@@ -65,11 +78,9 @@ def payment_success(request):
             "razorpay_payment_id": razorpay_payment_id,
             "razorpay_signature": razorpay_signature,
         })
-        logger.warning("Signature verified OK")
 
         payment = get_object_or_404(Payment, razorpay_order_id=razorpay_order_id)
-        order   = payment.order
-        logger.warning(f"Found payment={payment.id} order={order.id}")
+        order = payment.order
 
         PaymentAttempt.objects.get_or_create(
             payment=payment,
@@ -84,12 +95,17 @@ def payment_success(request):
         payment.save()
         order.status = "COMPLETED"
         order.save()
-        logger.warning(f"Order {order.id} marked COMPLETED")
+
+        # ✅ Email wrapped in try/except — never crashes the success page
+        try:
+            send_order_confirmation_email(order)
+        except Exception as e:
+            logger.error(f"Email send failed for order {order.id}: {e}")
+            # Don't raise — payment is done, email is optional
 
         return render(request, "payments/success.html", {"order": order})
 
     except razorpay.errors.SignatureVerificationError:
-        logger.error("Signature verification failed")
         try:
             payment = Payment.objects.get(razorpay_order_id=razorpay_order_id)
             PaymentAttempt.objects.get_or_create(
@@ -105,16 +121,16 @@ def payment_success(request):
             payment.save()
         except Payment.DoesNotExist:
             pass
+
         return render(request, "payments/failure.html", {
-            "error": "Payment verification failed. Please contact support."
+            "error": "Payment verification failed."
         })
 
     except Exception as e:
-        logger.error(f"payment_success EXCEPTION: {type(e).__name__}: {e}", exc_info=True)
+        logger.error(f"payment_success error: {e}", exc_info=True)
         return render(request, "payments/failure.html", {
             "error": f"Something went wrong: {str(e)}"
         })
-
 
 @csrf_exempt
 def payment_failure(request):
