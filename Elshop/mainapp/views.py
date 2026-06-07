@@ -1,31 +1,30 @@
 import logging
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db import OperationalError
+from django.http import JsonResponse
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib import messages
 
 from .models import CarouselImage
 from products.models import Product
 
-from django.http import JsonResponse
-
 logger = logging.getLogger(__name__)
 
-# Create your views here.
 
-def health_check(request):
-    return JsonResponse({"status": "ok"})
+def ping(request):
+    """Health check endpoint — used by UptimeRobot and keep-alive JS"""
+    return JsonResponse({"status": "alive"})
 
-def test_home(request):
-    return JsonResponse({"status": "homepage works"})
 
 def homeView(request):
     try:
-        template = 'mainapp/home.html'
         context = {
             'current_page': 'home',
             'carousel_images': CarouselImage.objects.all(),
             'products': Product.objects.all()
         }
-        return render(request, template_name=template, context=context)
+        return render(request, 'mainapp/home.html', context)
     except OperationalError as e:
         logger.error(f"homeView DB ERROR: {type(e).__name__}: {e}", exc_info=True)
         context = {
@@ -34,23 +33,16 @@ def homeView(request):
             'products': [],
             'db_error': 'Database is not ready. Please run migrations.'
         }
-        return render(request, template_name='mainapp/home.html', context=context)
+        return render(request, 'mainapp/home.html', context)
     except Exception as e:
         logger.error(f"homeView ERROR: {type(e).__name__}: {e}", exc_info=True)
         raise
 
-def aboutView(request):
-    template = 'mainapp/about.html'
-    context = {
-        'current_page' : 'about',
-    }
-    
-    return render(request, template, context)
 
-from django.shortcuts import render, redirect
-from django.core.mail import send_mail
-from django.conf import settings
-from django.contrib import messages
+def aboutView(request):
+    context = {'current_page': 'about'}
+    return render(request, 'mainapp/about.html', context)
+
 
 def contactView(request):
     if request.method == "POST":
@@ -85,9 +77,4 @@ def contactView(request):
         messages.success(request, "Your message has been sent successfully!")
         return redirect("contact_page")
 
-    return render(request, "mainapp/contact.html", {
-        "current_page": "contact"
-    })
-    # for request
-def ping(request):
-    return JsonResponse({"status": "alive"})
+    return render(request, "mainapp/contact.html", {"current_page": "contact"})

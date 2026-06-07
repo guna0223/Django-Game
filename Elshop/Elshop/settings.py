@@ -6,16 +6,15 @@ import os
 from pathlib import Path
 from decouple import config, Csv
 from dotenv import load_dotenv
-from urllib.parse import urlparse, parse_qsl
+from urllib.parse import urlparse
+import cloudinary
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Secret Key
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-330_@j!(@&kid!9ncjfwplez(knxhz=_vbcga594g#jaqhc5x3')
 
-# Debug
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = [
@@ -30,7 +29,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles',  # ← only once
+    'cloudinary_storage',          # ← after staticfiles
+    'cloudinary',
 
     # own apps
     'mainapp',
@@ -71,27 +72,30 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Elshop.wsgi.application'
 
-# ✅ DATABASES - Fixed (no duplicate!)
+# Database
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
-    # Production - PostgreSQL (Neon)
     tmpPostgres = urlparse(DATABASE_URL)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': tmpPostgres.path.replace('/', ''),
+            'NAME': tmpPostgres.path.lstrip('/'),
             'USER': tmpPostgres.username,
             'PASSWORD': tmpPostgres.password,
             'HOST': tmpPostgres.hostname,
-            'PORT': 5432,
+            'PORT': tmpPostgres.port or 5432,
             'OPTIONS': {
-                'sslmode': 'require',  # Required for Neon
+                'sslmode': 'require',
+                'connect_timeout': 10,
+                'keepalives': 1,
+                'keepalives_idle': 30,
+                'keepalives_interval': 10,
+                'keepalives_count': 5,
             },
         }
     }
 else:
-    # Local - SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -118,7 +122,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -176,3 +180,10 @@ LOGGING = {
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Cloudinary config
+cloudinary.config(
+    cloud_name=config('CLOUDINARY_CLOUD_NAME'),
+    api_key=config('CLOUDINARY_API_KEY'),
+    api_secret=config('CLOUDINARY_API_SECRET'),
+)
