@@ -151,8 +151,11 @@ RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET')
 
 CSRF_TRUSTED_ORIGINS = [
     'https://api.razorpay.com',
+    'https://*.razorpay.com',
+    'https://django-game-4ifu.onrender.com',
+    'http://localhost:8000',
+    'https://django-game-4ifu.onrender.com/'
 ]
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
