@@ -1,0 +1,66 @@
+{% for item in cart_items %}
+<div class="cart-item card shadow-sm" data-product-id="{{ item.product.id }}">
+    <div class="row g-0 align-items-center">
+
+        <div class="col-md-3 text-center cart-thumb">
+            {% if item.product.thumbnail %}
+            <img src="{{ item.product.thumbnail.url }}" class="img-fluid rounded">
+            {% endif %}
+        </div>
+
+        <div class="col-md-6">
+            <div class="card-body">
+                <h5 class="cart-product-title">
+                    <a href="{% url 'product_details' item.product.pk %}" class="no-decoration">
+                        {{ item.product.title }}
+                    </a>
+                </h5>
+
+                <p class="cart-product-desc">{{ item.product.desc|truncatewords:15 }}</p>
+
+                <p class="cart-price">
+                    <span class="text-muted text-decoration-line-through">₹{{ item.product.price }}</span>
+                    {% if item.product.discount %}
+                    <span class="text-success fw-semibold ms-2">{{ item.product.discount }}% OFF</span>
+                    {% endif %}
+                    <br>
+                    <span class="fw-bold">₹{{ item.product.offer_price|floatformat:2 }}</span>
+                </p>
+
+                <!-- Stock indicator -->
+                {% if item.max_reached %}
+                <small class="text-danger d-block mb-2">
+                    ⚠ Max stock reached ({{ item.product.stock }} available)
+                </small>
+                {% elif item.product.stock <= 5 %}
+                <small class="text-warning d-block mb-2">
+                    ⚠ Only {{ item.product.stock }} left in stock
+                </small>
+                {% else %}
+                <small class="text-muted d-block mb-2">
+                    {{ item.product.stock }} in stock
+                </small>
+                {% endif %}
+
+                <div class="cart-controls">
+                    <button class="btn btn-outline-secondary btn-sm qty-minus">-</button>
+                    <span class="cart-qty qty">{{ item.quantity }}</span>
+                    <button class="btn btn-outline-secondary btn-sm qty-plus"
+                        {% if item.max_reached %}disabled title="Max stock reached"{% endif %}>+</button>
+                    <button class="btn btn-danger btn-sm ms-3 remove-item">Remove</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 text-end cart-subtotal subtotal">
+            ₹{{ item.subtotal|floatformat:2 }}
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="text-center py-5 empty-cart-msg">
+    <i class="bi bi-cart-x" style="font-size:3rem; color:#888;"></i>
+    <p class="mt-3 text-muted">Your cart is empty</p>
+    <a href="/" class="btn btn-primary mt-2">Shop Now</a>
+</div>
+{% endfor %}

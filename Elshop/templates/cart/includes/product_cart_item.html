@@ -22,28 +22,34 @@
                 </p>
 
                 <p class="cart-price">
-
-                    <!-- Original Price -->
                     <span class="text-muted text-decoration-line-through">
                         ₹{{ item.product.price }}
                     </span>
-
-                    <!-- Discount Percentage -->
                     {% if item.product.discount %}
                     <span class="text-success fw-semibold ms-2">
                         {{ item.product.discount }}% OFF
                     </span>
                     {% endif %}
-
                     <br>
-
-                    <!-- Offer Price -->
                     <span class="fw-bold text-dark">
                         ₹{{ item.product.offer_price|floatformat:2 }}
                     </span>
-
                 </p>
 
+                <!-- ✅ Stock indicator -->
+                {% if item.max_reached %}
+                <small class="text-danger d-block mb-2">
+                    ⚠ Max stock reached ({{ item.product.stock }} available)
+                </small>
+                {% elif item.product.stock <= 5 %}
+                <small class="text-warning d-block mb-2">
+                    ⚠ Only {{ item.product.stock }} left in stock
+                </small>
+                {% else %}
+                <small class="text-muted d-block mb-2">
+                    {{ item.product.stock }} in stock
+                </small>
+                {% endif %}
 
                 <div class="cart-controls">
 
@@ -53,8 +59,11 @@
                     <!-- QTY -->
                     <span class="cart-qty qty">{{ item.quantity }}</span>
 
-                    <!-- PLUS -->
-                    <button class="btn btn-outline-secondary btn-sm qty-plus">+</button>
+                    <!-- PLUS — disabled when max stock reached -->
+                    <button class="btn btn-outline-secondary btn-sm qty-plus"
+                            {% if item.max_reached %}disabled title="Max stock reached"{% endif %}>
+                        +
+                    </button>
 
                     <!-- REMOVE -->
                     <button class="btn btn-danger btn-sm ms-3 remove-item">

@@ -3,15 +3,22 @@ from django.urls import reverse
 from .models import Product
 
 # Create your views here.
-
 def productsView(request):
-    template = 'products/products.html'
-    context = {
-        'products' : Product.objects.all(),
-        'current_page' : 'products'
-    }
-    
-    return render (request, template, context)
+    cart_quantities = {}
+    if request.user.is_authenticated:
+        from cart.models import CartItem
+        cart_items = CartItem.objects.filter(user=request.user).values('product_id', 'quantity')
+        cart_quantities = {item['product_id']: item['quantity'] for item in cart_items}
+
+    products = Product.objects.all()
+    for product in products:
+        in_cart = cart_quantities.get(product.id, 0)
+        product.available_stock = product.stock - in_cart
+
+    return render(request, 'products/products.html', {
+        'products': products,
+        'current_page': 'products'
+    })
 
 # search product
 from django.db.models import Q

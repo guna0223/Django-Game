@@ -19,10 +19,24 @@ def ping(request):
 
 def homeView(request):
     try:
+        # Build cart quantity lookup {product_id: quantity}
+        cart_quantities = {}
+        if request.user.is_authenticated:
+            from cart.models import CartItem
+            cart_items = CartItem.objects.filter(user=request.user).values('product_id', 'quantity')
+            cart_quantities = {item['product_id']: item['quantity'] for item in cart_items}
+
+        products = Product.objects.all()
+
+        # Attach available_stock to each product
+        for product in products:
+            in_cart = cart_quantities.get(product.id, 0)
+            product.available_stock = product.stock - in_cart
+
         context = {
             'current_page': 'home',
             'carousel_images': CarouselImage.objects.all(),
-            'products': Product.objects.all()
+            'products': products,
         }
         return render(request, 'mainapp/home.html', context)
     except OperationalError as e:
@@ -37,7 +51,6 @@ def homeView(request):
     except Exception as e:
         logger.error(f"homeView ERROR: {type(e).__name__}: {e}", exc_info=True)
         raise
-
 
 def aboutView(request):
     context = {'current_page': 'about'}
