@@ -1,5 +1,14 @@
 from django.contrib import admin
-from .models import Product, ProductImage, ProductVideo
+from .models import Product, ProductImage, ProductVideo, Category
+
+# =========================
+# CATEGORY ADMIN
+# =========================
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('title', 'created_at')
+    search_fields = ('title',)
+
 
 
 # =========================
@@ -32,6 +41,7 @@ class ProductAdmin(admin.ModelAdmin):
     # ---- MAIN LIST VIEW ----
     list_display = (
         'title',
+        'category',
         'price',
         'offer_price_display',
         'stock',
@@ -39,15 +49,15 @@ class ProductAdmin(admin.ModelAdmin):
         'created_at'
     )
 
-    list_editable = ('stock', 'discount')
-    list_filter = ('created_at',)
+    list_editable = ('stock', 'discount', 'category')
+    list_filter = ('category', 'created_at',)
     search_fields = ('title', 'desc')
     ordering = ('-created_at',)
 
     # ---- FORM VIEW ----
     fieldsets = (
         ('Basic Info', {
-            'fields': ('title', 'desc', 'thumbnail')
+            'fields': ('title', 'category', 'desc', 'thumbnail')
         }),
         ('Pricing & Stock', {
             'fields': ('price', 'discount', 'stock')

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .models import Product
+from .models import Product, Category
 
 # Create your views here.
 def productsView(request):
@@ -18,6 +18,26 @@ def productsView(request):
     return render(request, 'products/products.html', {
         'products': products,
         'current_page': 'products'
+    })
+
+def category_products(request, category_id):
+    from django.shortcuts import get_object_or_404
+    category = get_object_or_404(Category, id=category_id)
+    cart_quantities = {}
+    if request.user.is_authenticated:
+        from cart.models import CartItem
+        cart_items = CartItem.objects.filter(user=request.user).values('product_id', 'quantity')
+        cart_quantities = {item['product_id']: item['quantity'] for item in cart_items}
+
+    products = Product.objects.filter(category=category)
+    for product in products:
+        in_cart = cart_quantities.get(product.id, 0)
+        product.available_stock = product.stock - in_cart
+
+    return render(request, 'products/category_products.html', {
+        'products': products,
+        'category': category,
+        'current_page': 'category'
     })
 
 # search product

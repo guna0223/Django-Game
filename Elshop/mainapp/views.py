@@ -26,17 +26,39 @@ def homeView(request):
             cart_items = CartItem.objects.filter(user=request.user).values('product_id', 'quantity')
             cart_quantities = {item['product_id']: item['quantity'] for item in cart_items}
 
-        products = Product.objects.all()
+        products = list(Product.objects.all())
 
         # Attach available_stock to each product
         for product in products:
             in_cart = cart_quantities.get(product.id, 0)
             product.available_stock = product.stock - in_cart
 
+        # Newly Added
+        new_products = sorted(products, key=lambda p: p.created_at, reverse=True)[:5]
+
+        # Most Selling
+        try:
+            from django.db.models import Sum
+            from orders.models import OrderDetails
+            most_selling_ids = OrderDetails.objects.values('order_item').annotate(total_sold=Sum('quantity')).order_by('-total_sold')[:5]
+            ms_id_list = [item['order_item'] for item in most_selling_ids]
+            most_selling_products = []
+            for pid in ms_id_list:
+                for p in products:
+                    if p.id == pid:
+                        most_selling_products.append(p)
+                        break
+            if not most_selling_products:
+                most_selling_products = new_products
+        except Exception:
+            most_selling_products = new_products
+
         context = {
             'current_page': 'home',
             'carousel_images': CarouselImage.objects.all(),
             'products': products,
+            'new_products': new_products,
+            'most_selling_products': most_selling_products,
         }
         return render(request, 'mainapp/home.html', context)
     except OperationalError as e:

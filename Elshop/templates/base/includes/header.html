@@ -38,6 +38,27 @@
                         </a>
                     </li>
 
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if current_page == 'category' %}active{% endif %}"
+                           href="#"
+                           role="button"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Category
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% for cat in categories %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'category_products' cat.id %}">
+                                    {{ cat.title }}
+                                </a>
+                            </li>
+                            {% empty %}
+                            <li><a class="dropdown-item" href="#">No Categories</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link {% if current_page == 'contact' %}active{% endif %}"
                            href="{% url 'contact_page' %}">

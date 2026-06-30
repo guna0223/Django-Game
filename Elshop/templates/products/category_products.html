@@ -1,0 +1,32 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+{{ category.title }} Games
+{% endblock %}
+
+{% block content %}
+<section class="products-header py-5 text-center fade-in mt-5">
+    <div class="container">
+        <h1 class="display-4 fw-bold gradient-text mb-3">{{ category.title }} Games</h1>
+        <p class="lead text-muted">Browse all games in {{ category.title }}</p>
+    </div>
+</section>
+
+<section id="products-container" class="container-fluid my-4" data-add-url="{% url 'add_to_cart' %}">
+    {% csrf_token %}
+    <div class="row g-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
+        {% for product in products %}
+        {% if product.thumbnail %}
+        <div class="col">
+            {% include 'products/includes/productCard.html' %}
+        </div>
+        {% endif %}
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="text-muted">No Products Available in this Category!</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}
