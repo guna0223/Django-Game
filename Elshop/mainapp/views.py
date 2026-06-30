@@ -53,12 +53,23 @@ def homeView(request):
         except Exception:
             most_selling_products = []
 
+        from products.models import Category
+        category_groups = []
+        for cat in Category.objects.all():
+            cat_products = [p for p in products if p.category_id == cat.id][:10]
+            if cat_products:
+                category_groups.append({
+                    'category': cat,
+                    'products': cat_products
+                })
+
         context = {
             'current_page': 'home',
             'carousel_images': CarouselImage.objects.all(),
             'products': products,
             'new_products': new_products,
             'most_selling_products': most_selling_products,
+            'category_groups': category_groups,
         }
         return render(request, 'mainapp/home.html', context)
     except OperationalError as e:

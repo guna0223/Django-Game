@@ -47,14 +47,15 @@
                             Category
                         </a>
                         <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'products' %}">ALL</a>
+                            </li>
                             {% for cat in categories %}
                             <li>
                                 <a class="dropdown-item" href="{% url 'category_products' cat.id %}">
-                                    {{ cat.title }}
+                                    {{ cat.title|upper }}
                                 </a>
                             </li>
-                            {% empty %}
-                            <li><a class="dropdown-item" href="#">No Categories</a></li>
                             {% endfor %}
                         </ul>
                     </li>
