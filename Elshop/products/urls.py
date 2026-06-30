@@ -28,9 +28,6 @@ urlpatterns = [
     
     path('image/edit/<int:pk>',EditProductImage, name='edit_pro_image'),
     path('image/del/<int:pk>',DeleteProductImage, name='del_pro_image'),
-    
-    # product video
-    
     path('video/edit/<int:pk>',EditProductVideo, name='edit_product_video'),
     path('video/del/<int:pk>',DeleteProductVideo, name='delete_product_video'),
 ]

@@ -1,5 +1,32 @@
 from django import forms
-from .models import ProductImage, ProductVideo
+from .models import ProductImage, ProductVideo, Product, Category
+
+class ProductForm(forms.ModelForm):
+    new_category = forms.CharField(
+        max_length=100,
+        required=False,
+        help_text="Or type a new category name to create it"
+    )
+
+    class Meta:
+        model = Product
+        fields = '__all__'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        category = cleaned_data.get('category')
+        new_category = cleaned_data.get('new_category')
+
+        if not category and not new_category:
+            raise forms.ValidationError("Please select an existing category or create a new one.")
+        return cleaned_data
+
+    def save(self, commit=True):
+        new_category_title = self.cleaned_data.get('new_category')
+        if new_category_title:
+            category, created = Category.objects.get_or_create(title=new_category_title)
+            self.instance.category = category
+        return super().save(commit=commit)
 
 class ProductMediaForm(forms.ModelForm):
     video_code = forms.CharField(

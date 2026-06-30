@@ -34,8 +34,20 @@ def category_products(request, category_id):
         in_cart = cart_quantities.get(product.id, 0)
         product.available_stock = product.stock - in_cart
 
+    # Most selling logic for this specific category
+    from django.db.models import Sum
+    from orders.models import OrderDetails
+    most_selling = Product.objects.filter(category=category, orderdetails__isnull=False).annotate(
+        total_sold=Sum('orderdetails__quantity')
+    ).order_by('-total_sold')[:5]
+
+    if not most_selling:
+        # Fallback to new products in this category if no sales
+        most_selling = products.order_by('-created_at')[:5]
+
     return render(request, 'products/category_products.html', {
         'products': products,
+        'most_selling_products': most_selling,
         'category': category,
         'current_page': 'category'
     })
@@ -74,9 +86,9 @@ from django.views.generic import (
 
 class CreateProduct(CreateView):
     model = Product
+    from .forms import ProductForm
+    form_class = ProductForm
     template_name = 'products/add_product.html'
-    
-    fields = "__all__"
     
     success_url = '/'
     
@@ -91,12 +103,26 @@ class ProductDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # show other products except current one
-        context['products'] = Product.objects.exclude(
-            id=self.object.id
-        )[:8]  # limit to 8 products
+        # Related products in the same category
+        if self.object.category:
+            context['products'] = Product.objects.filter(
+                category=self.object.category
+            ).exclude(id=self.object.id)[:8]
+        else:
+            context['products'] = Product.objects.exclude(id=self.object.id)[:8]
+            
+        context['reviews'] = self.object.reviews.all().order_by('-created_at')
 
         return context
+        
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if request.user.is_authenticated:
+            from .models import Review
+            rating = request.POST.get('rating', 5)
+            text = request.POST.get('text', '')
+            Review.objects.create(product=self.object, user=request.user, rating=rating, text=text)
+        return redirect('product_details', pk=self.object.pk)
 
     
 # views for video
@@ -225,3 +251,4 @@ def DeleteProductVideo(request, pk):
         return redirect('product_details', product_id)
     
     return render(request, 'products/video_del.html', {'video': video, 'video_pk': pk})
+

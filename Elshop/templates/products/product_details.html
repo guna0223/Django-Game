@@ -22,7 +22,16 @@
             <div class="product-info-card w-100">
                 <img src="{{ product.thumbnail.url }}" class="card-img-top product-thumb" alt="{{ product.title }}">
                 <h2 class="product-title">{{ product.title }}</h2>
-
+                <div class="mb-2 text-warning">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= product.average_rating %}
+                            <i class="bi bi-star-fill"></i>
+                        {% else %}
+                            <i class="bi bi-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                    <span class="text-muted ms-2">({{ reviews|length }} reviews)</span>
+                </div>
                 <p class="product-desc">
                     {{ product.desc }}
                 </p>
@@ -91,6 +100,73 @@
             </div>
         </div>
 
+    </div>
+</section>
+
+<!-- ================= REVIEWS SECTION ================= -->
+<section class="container py-5 fade-in">
+    <h3 class="mb-4">Customer Reviews</h3>
+    
+    <div class="row">
+        <div class="col-md-7">
+            {% for review in reviews %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title">{{ review.user.username }}</h5>
+                        <div class="text-warning">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="bi bi-star-fill"></i>
+                                {% else %}
+                                    <i class="bi bi-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="card-text">{{ review.text }}</p>
+                    <small class="text-muted">{{ review.created_at|date:"F j, Y" }}</small>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">No reviews yet. Be the first to review this game!</p>
+            {% endfor %}
+        </div>
+        
+        <div class="col-md-5">
+            {% if user.is_authenticated and not user.is_staff %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Write a Review</h5>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Rating</label>
+                            <select name="rating" class="form-select" required>
+                                <option value="5">5 Stars</option>
+                                <option value="4">4 Stars</option>
+                                <option value="3">3 Stars</option>
+                                <option value="2">2 Stars</option>
+                                <option value="1">1 Star</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Review</label>
+                            <textarea name="text" class="form-control" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+            {% elif not user.is_authenticated %}
+            <div class="card">
+                <div class="card-body text-center">
+                    <p>You must be logged in to leave a review.</p>
+                    <a href="{% url 'signin' %}" class="btn btn-primary">Login</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
     </div>
 </section>
 

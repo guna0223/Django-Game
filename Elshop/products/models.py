@@ -1,5 +1,6 @@
 from django.db import models
 from decimal import Decimal
+from django.contrib.auth.models import User
 
 class Category(models.Model):
     title = models.CharField(max_length=100)
@@ -29,6 +30,13 @@ class Product(models.Model):
         if self.discount:
             return self.price -(self.price * Decimal(self.discount) / Decimal(100))
         return self.price
+        
+    @property
+    def average_rating(self):
+        reviews = self.reviews.all()
+        if reviews:
+            return sum(r.rating for r in reviews) / len(reviews)
+        return 0
     
     def __str__(self):
         return self.title
@@ -68,3 +76,13 @@ class ProductVideo(models.Model):
     
     def __str__(self):
         return f"{self.product.title} video"
+
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(default=5) # 1 to 5
+    text = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review for {self.product.title} by {self.user.username}"
