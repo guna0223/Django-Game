@@ -49,9 +49,9 @@ def homeView(request):
                         most_selling_products.append(p)
                         break
             if not most_selling_products:
-                most_selling_products = new_products
+                most_selling_products = []
         except Exception:
-            most_selling_products = new_products
+            most_selling_products = []
 
         context = {
             'current_page': 'home',

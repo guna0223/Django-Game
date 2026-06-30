@@ -14,7 +14,11 @@
 
 {% if most_selling_products %}
 <section class="container-fluid my-4" data-add-url="{% url 'add_to_cart' %}">
-    <h2 class="text-center mb-4">Most Selling in {{ category.title }}</h2>
+    <div class="row g-4 mt-2">
+        <div class="col-12">
+            <h2 class="game-categories">Most Selling in {{ category.title|upper }}</h2>
+        </div>
+    </div>
     <div class="row g-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
         {% for product in most_selling_products %}
         {% if product.thumbnail %}
@@ -29,7 +33,11 @@
 {% endif %}
 
 <section id="products-container" class="container-fluid my-4" data-add-url="{% url 'add_to_cart' %}">
-    <h2 class="text-center mb-4">All {{ category.title }} Games</h2>
+    <div class="row g-4 mt-2">
+        <div class="col-12">
+            <h2 class="game-categories">All {{ category.title|upper }} Games</h2>
+        </div>
+    </div>
     {% csrf_token %}
     <div class="row g-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
         {% for product in products %}

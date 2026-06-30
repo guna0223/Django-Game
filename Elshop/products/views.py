@@ -42,8 +42,7 @@ def category_products(request, category_id):
     ).order_by('-total_sold')[:5]
 
     if not most_selling:
-        # Fallback to new products in this category if no sales
-        most_selling = products.order_by('-created_at')[:5]
+        most_selling = []
 
     return render(request, 'products/category_products.html', {
         'products': products,

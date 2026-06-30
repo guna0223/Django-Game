@@ -23,6 +23,7 @@
     </div>
 
     <!-- ================= MOST SELLING GAMES ================= -->
+    {% if most_selling_products %}
     <div class="row g-4 mt-4">
         <div class="col-12">
             <h2 class="game-categories">Most Selling Games</h2>
@@ -35,11 +36,8 @@
             {% include 'products/includes/productCard.html' %}
         </div>
         {% endif %}
-        {% empty %}
-        <div class="col-12 text-center">
-            <p class="text-muted">No Products Available!</p>
-        </div>
         {% endfor %}
     </div>
+    {% endif %}
 
 </section>
