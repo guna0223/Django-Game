@@ -512,9 +512,9 @@ function getCookie(name) {
 }
 
 /* =====================================================
-   BOOT
+   BOOT & TURBO SUPPORT
 ===================================================== */
-document.addEventListener('DOMContentLoaded', function () {
+function initializeApp() {
     loadCartCount();
     initNavbarScroll();
     initProductCards();
@@ -525,8 +525,11 @@ document.addEventListener('DOMContentLoaded', function () {
     initScrollAnimations();
     initGamingAlerts();
     styleRazorpayButton();
-    initStockUI();  // ← syncs stock from server, no localStorage
-});
+    initStockUI();
+}
+
+document.addEventListener('DOMContentLoaded', initializeApp);
+document.addEventListener('turbo:load', initializeApp);
 
 // Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(a => {

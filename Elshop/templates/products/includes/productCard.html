@@ -1,8 +1,6 @@
 {% with avail=product.available_stock|default:product.stock %}
 
-<div class="card product-card h-100 fade-in-up scroll-card"
-     data-stock="{{ avail }}"
-     data-product-id="{{ product.id }}">
+<div class="card product-card h-100 fade-in-up scroll-card" data-stock="{{ avail }}" data-product-id="{{ product.id }}">
 
     <div class="card-img-top-wrapper tilt-container">
         <a href="{% url 'product_details' product.pk %}" class="text-decoration-none text-dark">
@@ -15,7 +13,8 @@
     </div>
 
     <div class="card-body d-flex flex-column">
-        <a href="{% url 'product_details' product.pk %}" class="text-decoration-none text-dark d-flex flex-column flex-grow-1">
+        <a href="{% url 'product_details' product.pk %}"
+            class="text-decoration-none text-dark d-flex flex-column flex-grow-1">
             {% if product.category %}
             <small class="text-muted d-block mb-1" style="font-size: 0.75rem; letter-spacing: 1px;">
                 {{ product.category.title|upper }}
@@ -35,42 +34,40 @@
             </div>
         </a>
 
-        <!-- ✅ Stock indicator -->
-        {% if avail <= 0 %}
-            <small class="text-danger d-block mt-2">
-                ✕ Out of Stock
+        {% if user.is_staff%}
+        {% if avail <= 0 %} <small class="text-danger d-block mt-2">
+            ✕ Out of Stock
             </small>
-        {% elif avail <= 5 %}
-            <small class="text-warning d-block mt-2 stock-warning">
+            {% elif avail <= 5 %} <small class="text-warning d-block mt-2 stock-warning">
                 ⚠ Only {{ avail }} left in stock
-            </small>
-        {% else %}
-            <small class="text-muted d-block mt-2">
-                ✔ {{ avail }} in stock
-            </small>
+                </small>
+                {% else %}
+                <small class="text-muted d-block mt-2">
+                    ✔ {{ avail }} in stock
+                </small>
+                {% endif %}
         {% endif %}
+                {% if user.is_staff %}
+                <a href="{% url 'edit_product' product.pk %}" class="btn btn-sm btn-warning w-100 mt-2">
+                    <i class="bi bi-pencil-square"></i> Edit Product
+                </a>
 
-        {% if user.is_staff %}
-            <a href="{% url 'edit_product' product.pk %}" class="btn btn-sm btn-warning w-100 mt-2">
-                <i class="bi bi-pencil-square"></i> Edit Product
-            </a>
+                {% elif avail > 0 %}
+                {% if user.is_authenticated %}
+                <button class="btn btn-sm btn-primary w-100 mt-2 add-to-cart">
+                    Add to Cart
+                </button>
+                {% else %}
+                <a class="btn btn-sm btn-primary w-100 mt-2 add-to-cart" href="{% url 'signin' %}">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Login
+                </a>
+                {% endif %}
 
-        {% elif avail > 0 %}
-            {% if user.is_authenticated %}
-            <button class="btn btn-sm btn-primary w-100 mt-2 add-to-cart">
-                Add to Cart
-            </button>
-            {% else %}
-            <a class="btn btn-sm btn-primary w-100 mt-2 add-to-cart" href="{% url 'signin' %}">
-                <i class="bi bi-box-arrow-in-right me-2"></i> Login
-            </a>
-            {% endif %}
-
-        {% else %}
-            <button class="btn btn-sm btn-secondary w-100 mt-2 out-of-stock" disabled>
-                <i class="bi bi-x-circle me-1"></i> Out of Stock
-            </button>
-        {% endif %}
+                {% else %}
+                <button class="btn btn-sm btn-secondary w-100 mt-2 out-of-stock" disabled>
+                    <i class="bi bi-x-circle me-1"></i> Out of Stock
+                </button>
+                {% endif %}
 
     </div>
 </div>

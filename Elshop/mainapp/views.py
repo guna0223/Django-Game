@@ -26,7 +26,7 @@ def homeView(request):
             cart_items = CartItem.objects.filter(user=request.user).values('product_id', 'quantity')
             cart_quantities = {item['product_id']: item['quantity'] for item in cart_items}
 
-        products = list(Product.objects.all())
+        products = list(Product.objects.select_related('category').all())
 
         # Attach available_stock to each product
         for product in products:

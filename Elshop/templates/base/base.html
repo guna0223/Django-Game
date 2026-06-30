@@ -25,6 +25,11 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    
+    <!-- Hotwired Turbo -->
+    <script type="module">
+        import hotwiredTurbo from 'https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/+esm';
+    </script>
 </head>
 
 <body>
@@ -38,9 +43,7 @@
         {% block content %}{% endblock %}
     </main>
     <!-- footer -->
-    <footer>
-        {% include 'base/includes/footer.html' %}
-    </footer>
+    {% include 'base/includes/footer.html' %}
     <!-- Bootstrap JS -->
     <!-- Source: https://getbootstrap.com/docs/5.3/ -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
