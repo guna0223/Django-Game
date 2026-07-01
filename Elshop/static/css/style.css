@@ -1364,7 +1364,6 @@ textarea.form-control {
 
 footer {
     background: linear-gradient(180deg, var(--bg-dark-secondary) 0%, var(--bg-dark) 100%);
-    border-top: 2px solid rgba(255, 61, 0, 0.3);
     padding: 4rem 0 2rem;
     margin-top: 4rem;
     position: relative;
