@@ -89,15 +89,15 @@
                 </ul>
 
                 <!-- MOBILE ACTION ROW (Search + Profile) -->
-                <div class="d-flex align-items-center justify-content-between mt-3 mt-lg-0 w-100 w-lg-auto mobile-action-row">
+                <div class="d-flex align-items-center justify-content-between mt-3 mt-lg-0 w-100 w-lg-auto mobile-action-row ms-lg-auto">
                     <!-- SEARCH -->
                     <form class="d-flex me-lg-3" method="get" action="{% url 'search_products' %}">
-                        <input class="form-control form-control-sm"
+                        <input class="form-control"
                                type="search"
                                name="q"
                                value="{{ query }}"
                                placeholder="Search..." aria-label="search">
-                        <button class="btn btn-sm ms-2 cart-icon" type="submit">
+                        <button class="btn ms-2 nav-search-btn" type="submit">
                             <i class="bi bi-search"></i>
                         </button>
                     </form>

@@ -3636,6 +3636,49 @@ footer::before {
 }
 
 /* =====================================================
+   DESKTOP NAVBAR FIXES
+   ===================================================== */
+@media (min-width: 992px) {
+    /* Center the nav-links in available space to prevent overlapping */
+    .tech-navbar .navbar-collapse {
+        display: flex;
+    }
+    
+    .tech-navbar .navbar-nav.mx-auto {
+        display: flex;
+        flex: 1;
+        justify-content: center;
+        margin: 0 auto !important;
+    }
+    
+    /* Search Button matching Form Control height */
+    .nav-search-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        height: auto;
+        border-radius: var(--radius-sm);
+        background: rgba(255, 61, 0, 0.1);
+        border: 1px solid rgba(255, 61, 0, 0.3);
+        transition: all var(--transition-fast);
+        color: var(--text-secondary);
+    }
+    
+    .nav-search-btn:hover {
+        background: rgba(255, 61, 0, 0.2);
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-glow-orange);
+        color: var(--primary-color);
+    }
+    
+    /* Fix action row width so search bar stays next to account */
+    .mobile-action-row {
+        width: auto !important;
+    }
+}
+
+/* =====================================================
    RESPONSIVE NAVBAR (MOBILE FIXES)
    ===================================================== */
 @media (max-width: 991.98px) {
