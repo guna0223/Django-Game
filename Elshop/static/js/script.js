@@ -512,6 +512,35 @@ function getCookie(name) {
 }
 
 /* =====================================================
+   PASSWORD TOGGLES
+===================================================== */
+function initPasswordToggles() {
+    document.querySelectorAll('input[type="password"]').forEach(input => {
+        if (input.parentElement.classList.contains('password-wrapper')) return;
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = 'password-wrapper position-relative';
+        
+        input.parentNode.insertBefore(wrapper, input);
+        wrapper.appendChild(input);
+        
+        const icon = document.createElement('i');
+        icon.className = 'bi bi-eye-slash password-toggle-icon';
+        wrapper.appendChild(icon);
+        
+        icon.addEventListener('click', () => {
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'bi bi-eye password-toggle-icon text-primary';
+            } else {
+                input.type = 'password';
+                icon.className = 'bi bi-eye-slash password-toggle-icon';
+            }
+        });
+    });
+}
+
+/* =====================================================
    BOOT & TURBO SUPPORT
 ===================================================== */
 function initializeApp() {
@@ -526,6 +555,7 @@ function initializeApp() {
     initGamingAlerts();
     styleRazorpayButton();
     initStockUI();
+    initPasswordToggles();
 }
 
 document.addEventListener('DOMContentLoaded', initializeApp);
