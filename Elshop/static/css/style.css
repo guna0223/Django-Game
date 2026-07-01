@@ -3634,3 +3634,88 @@ footer::before {
 .razorpay-container {
     display: inline-block;
 }
+
+/* =====================================================
+   RESPONSIVE NAVBAR (MOBILE FIXES)
+   ===================================================== */
+@media (max-width: 991.98px) {
+    /* Navbar Collapse Styling */
+    .navbar-collapse {
+        background: var(--bg-card);
+        border: 1px solid rgba(255, 61, 0, 0.2);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        margin-top: 1rem;
+        box-shadow: var(--shadow-card);
+    }
+    
+    /* Left Align Nav Links & Fix Underline */
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        margin: 0;
+    }
+    
+    .navbar-nav .nav-item:last-child .nav-link {
+        border-bottom: none;
+    }
+    
+    /* Correct Underline Alignment for Mobile */
+    .navbar-nav .nav-link::before {
+        left: 1rem;
+        transform: none;
+    }
+    
+    .navbar-nav .nav-link:hover::before,
+    .navbar-nav .nav-link.active::before {
+        width: 40px;
+    }
+    
+    /* Dropdown inside collapse */
+    .navbar-nav .dropdown-menu {
+        text-align: left;
+        border: none;
+        background: var(--bg-input);
+        padding: 0.5rem 0;
+        margin-top: 0.5rem;
+    }
+    
+    .navbar-nav .dropdown-item {
+        padding: 0.5rem 1rem;
+    }
+    
+    /* Mobile Action Row (Search on left, Profile on right) */
+    .mobile-action-row {
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 1rem;
+        margin-top: 0.5rem !important;
+    }
+    
+    /* Search Form Size on Mobile */
+    .mobile-action-row form {
+        flex: 1;
+        max-width: 250px;
+    }
+    
+    .mobile-action-row .form-control {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.75rem;
+    }
+    
+    .mobile-action-row .btn {
+        padding: 0.4rem 0.75rem;
+        height: auto;
+        width: auto;
+    }
+    
+    /* Dropdown alignment for profile */
+    .mobile-action-row .dropdown-menu {
+        position: absolute;
+        width: auto;
+        min-width: 200px;
+        left: auto;
+        right: 0;
+        top: 100%;
+    }
+}

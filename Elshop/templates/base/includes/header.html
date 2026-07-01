@@ -88,71 +88,76 @@
                     {% endif %}
                 </ul>
 
-                <!-- SEARCH -->
-                <form class="d-flex me-3" method="get" action="{% url 'search_products' %}">
-                    <input class="form-control"
-                           type="search"
-                           name="q"
-                           value="{{ query }}"
-                           placeholder="Search products..." aria-label="search">
-                    <button class="btn  mt-2 ms-2 cart-icon" type="submit">
-                        <i class="bi bi-search "></i>
-                    </button>
-                </form>
+                <!-- MOBILE ACTION ROW (Search + Profile) -->
+                <div class="d-flex align-items-center justify-content-between mt-3 mt-lg-0 w-100 w-lg-auto mobile-action-row">
+                    <!-- SEARCH -->
+                    <form class="d-flex me-lg-3" method="get" action="{% url 'search_products' %}">
+                        <input class="form-control form-control-sm"
+                               type="search"
+                               name="q"
+                               value="{{ query }}"
+                               placeholder="Search..." aria-label="search">
+                        <button class="btn btn-sm ms-2 cart-icon" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
 
-                <!-- PROFILE & CART -->
-                <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+                    <!-- PROFILE & CART -->
+                    <ul class="navbar-nav flex-row align-items-center mb-0 gap-3 gap-lg-0 ms-3 ms-lg-0">
 
-                    {% if not user.is_staff %}
-                    <li class="nav-item position-relative me-3">
-                        <a class="nav-link cart-icon" href="{% url 'view_cart' %}">
-                            <i class="bi bi-cart3"></i>
-                            {% if user.is_authenticated %}
-                            <span class="cart-badge"
-                                  id="cart-count"
-                                  data-count-url="{% url 'cart_count' %}">
-                                0
-                            </span>
-                            {% endif %}
-                        </a>
-                    </li>
-                    {% endif %}
+                        {% if not user.is_staff %}
+                        <li class="nav-item position-relative me-lg-3">
+                            <a class="nav-link cart-icon" href="{% url 'view_cart' %}">
+                                <i class="bi bi-cart3"></i>
+                                {% if user.is_authenticated %}
+                                <span class="cart-badge"
+                                      id="cart-count"
+                                      data-count-url="{% url 'cart_count' %}">
+                                    0
+                                </span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        {% endif %}
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center"
-                           href="#"
-                           role="button"
-                           data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-2"></i>
-                            {% if user.is_authenticated %}
-                                {{ user.username|capfirst }}
-                            {% else %}
-                                Account
-                            {% endif %}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            {% if user.is_authenticated %}
-                            <li>
-                                <a class="dropdown-item" href="{% url 'order_history' %}">
-                                    <i class="bi bi-clock-history me-2"></i>Order History
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form action="{% url 'logout' %}" method="post">
-                                    {% csrf_token %}
-                                    <button class="dropdown-item text-danger">
-                                        <i class="bi bi-box-arrow-right me-2"></i>Logout
-                                    </button>
-                                </form>
-                            </li>
-                            {% else %}
-                            <li><a class="dropdown-item" href="{% url 'signup' %}"><i class="bi bi-person-plus me-2"></i>Register</a></li>
-                            <li><a class="dropdown-item" href="{% url 'signin' %}"><i class="bi bi-box-arrow-in-right me-2"></i>Login</a></li>
-                            {% endif %}
-                        </ul>
-                    </li>
-                </ul>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center"
+                               href="#"
+                               role="button"
+                               data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle me-2"></i>
+                                <span class="d-none d-lg-inline">
+                                {% if user.is_authenticated %}
+                                    {{ user.username|capfirst }}
+                                {% else %}
+                                    Account
+                                {% endif %}
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                {% if user.is_authenticated %}
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'order_history' %}">
+                                        <i class="bi bi-clock-history me-2"></i>Order History
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form action="{% url 'logout' %}" method="post">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                                {% else %}
+                                <li><a class="dropdown-item" href="{% url 'signup' %}"><i class="bi bi-person-plus me-2"></i>Register</a></li>
+                                <li><a class="dropdown-item" href="{% url 'signin' %}"><i class="bi bi-box-arrow-in-right me-2"></i>Login</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
 
             </div>
         </div>
