@@ -118,9 +118,16 @@ class ProductDetail(DetailView):
         self.object = self.get_object()
         if request.user.is_authenticated:
             from .models import Review
-            rating = request.POST.get('rating', 5)
-            text = request.POST.get('text', '')
-            Review.objects.create(product=self.object, user=request.user, rating=rating, text=text)
+            from django.contrib import messages
+            
+            review_count = Review.objects.filter(product=self.object, user=request.user).count()
+            if review_count >= 2:
+                messages.error(request, "You can only submit up to 2 reviews per product.")
+            else:
+                rating = request.POST.get('rating', 5)
+                text = request.POST.get('text', '')
+                Review.objects.create(product=self.object, user=request.user, rating=rating, text=text)
+                messages.success(request, "Review submitted successfully.")
         return redirect('product_details', pk=self.object.pk)
 
     
