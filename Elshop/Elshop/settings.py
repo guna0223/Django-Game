@@ -165,7 +165,6 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.razorpay.com',
     'https://django-game-4ifu.onrender.com',
     'http://localhost:8000',
-    'https://django-game-4ifu.onrender.com/'
 ]
 LOGGING = {
     "version": 1,
